@@ -1,16 +1,27 @@
 import React, { type FC } from "react";
 import { Outlet } from "react-router-dom";
+import { Header } from "./app/Header";
+import { PortalPage } from "../portal/PortalPage";
+import { Footer } from "./app/Footer";
 
-interface MainLayoutProps {}
+interface MainLayoutProps {
+   isModal?: boolean;
+}
 
-export const MainLayout: FC<MainLayoutProps> = (props: MainLayoutProps) => {
+export const MainLayout: FC<MainLayoutProps> = ({ isModal = false }) => {
    return (
-      <div>
-         <header>HEADER</header>
+      <>
+         <Header />
          <main>
-            <Outlet />
+            {isModal ? (
+               <PortalPage>
+                  <Outlet />
+               </PortalPage>
+            ) : (
+               <Outlet />
+            )}
          </main>
-         <footer>FOOTER</footer>
-      </div>
+         <Footer />
+      </>
    );
 };

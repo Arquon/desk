@@ -1,0 +1,26 @@
+[
+   {
+      "name": "toDo",
+      "title": "К выполнению",
+      "id": "1",
+      "number": 1
+   },
+   {
+      "name": "inProgress",
+      "title": "В работе",
+      "id": "2",
+      "number": 2
+   },
+   {
+      "name": "finished",
+      "title": "Завершено",
+      "id": "3",
+      "number": 3
+   },
+   {
+      "name": "backlog",
+      "title": "Бэклог",
+      "id": "4",
+      "number": 0
+   }
+]

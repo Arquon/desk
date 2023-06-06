@@ -45,7 +45,7 @@ const optimization = () => {
    return config;
 };
 
-const cssLoaders = () => {
+const cssLoaders = (isSass) => {
    const miniCssExtractPluginLoader = {
       loader: MiniCssExtractPlugin.loader,
    };
@@ -67,7 +67,8 @@ const cssLoaders = () => {
       loader: "sass-loader",
    };
 
-   const loaders = [miniCssExtractPluginLoader, cssLoader, postCssLoader, sassLoader];
+   const loaders = [miniCssExtractPluginLoader, cssLoader, postCssLoader];
+   if (isSass) loaders.push(sassLoader);
 
    return loaders;
 };
@@ -105,8 +106,15 @@ module.exports = {
    module: {
       rules: [
          {
-            test: /\.scss$/i,
+            test: /\.css$/i,
             use: cssLoaders(),
+            generator: {
+               filename: cssFileName,
+            },
+         },
+         {
+            test: /\.scss$/i,
+            use: cssLoaders(true),
             generator: {
                filename: cssFileName,
             },
