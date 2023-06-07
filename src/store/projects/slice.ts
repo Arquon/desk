@@ -1,7 +1,8 @@
 import { type IProject } from "@/types/IProject";
 import { createSlice } from "@reduxjs/toolkit";
-import { createProject, fetchProjects, fetchSingleProject } from "./actions";
+import { createProject, deleteProject, fetchProjects, fetchSingleProject, updateProject } from "./actions";
 import { type Nullable, type TimeStamp } from "@/types/default";
+import { isProjectsAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 
 interface IProjectsState {
    projects: IProject[];
@@ -9,6 +10,7 @@ interface IProjectsState {
    lastFetchProjects: Nullable<TimeStamp>;
    currentProject: Nullable<IProject>;
    isLoadingSingleProject: boolean;
+   isLoadingEditSingleProject: boolean;
    lastFetchSingleProject: Nullable<TimeStamp>;
 }
 
@@ -18,6 +20,7 @@ const initialState: IProjectsState = {
    lastFetchProjects: null,
    currentProject: null,
    isLoadingSingleProject: true,
+   isLoadingEditSingleProject: true,
    lastFetchSingleProject: null,
 };
 
@@ -40,7 +43,7 @@ const projectSlice = createSlice({
             state.isLoadingProjects = false;
          })
          // fetchSingleProject
-         .addCase(fetchSingleProject.pending, (state, action) => {
+         .addCase(fetchSingleProject.pending, (state) => {
             state.isLoadingSingleProject = true;
          })
          .addCase(fetchSingleProject.fulfilled, (state, action) => {
@@ -53,11 +56,44 @@ const projectSlice = createSlice({
          })
          // createProject
          .addCase(createProject.pending, (state) => {
-            state.isLoadingProjects = true;
+            state.isLoadingSingleProject = true;
          })
          .addCase(createProject.fulfilled, (state, action) => {
             state.projects.push(action.payload);
-            state.isLoadingProjects = false;
+            state.isLoadingSingleProject = false;
+         })
+         .addCase(createProject.rejected, (state) => {
+            state.isLoadingSingleProject = false;
+         })
+         // updateProject
+         .addCase(updateProject.pending, (state) => {
+            state.isLoadingSingleProject = true;
+         })
+         .addCase(updateProject.fulfilled, (state, action) => {
+            state.projects.map((project) => {
+               if (project.id === action.payload.id) return action.payload;
+               return project;
+            });
+            state.isLoadingSingleProject = false;
+         })
+         .addCase(updateProject.rejected, (state) => {
+            state.isLoadingSingleProject = false;
+         })
+         // deleteProject
+         .addCase(deleteProject.pending, (state) => {
+            state.isLoadingSingleProject = true;
+         })
+         .addCase(deleteProject.fulfilled, (state, action) => {
+            state.projects = state.projects.filter((project) => project.id !== action.payload);
+            state.isLoadingSingleProject = false;
+         })
+         .addCase(deleteProject.rejected, (state) => {
+            state.isLoadingSingleProject = false;
+         })
+         // matcher
+         .addMatcher(isProjectsAsyncThunkError, (state) => {
+            state.lastFetchSingleProject = null;
+            state.lastFetchProjects = null;
          });
    },
 });

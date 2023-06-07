@@ -1,13 +1,19 @@
 import { nanoid } from "@reduxjs/toolkit";
 import httpService from "./http.service";
 import { type TProjectWithoutId, type IProject } from "@/types/IProject";
+import { isAxiosError } from "axios";
 
 const projectsEndPoint = "projects/";
 
 export const projectsService = {
    fetchProjects: async (userId: string): Promise<IProject[]> => {
-      const { data } = await httpService.get<IProject[]>(`${projectsEndPoint}${userId}/`);
-      return data;
+      try {
+         const { data } = await httpService.get<IProject[]>(`${projectsEndPoint}${userId}/`);
+         return data;
+      } catch (error) {
+         if (isAxiosError(error) && error.message === "CustomError" && error.code === "NOT_FOUND") return [];
+         throw error;
+      }
    },
    fetchSingleProject: async (userId: string, projectId: string): Promise<IProject> => {
       const { data } = await httpService.get<IProject>(`${projectsEndPoint}${userId}/${projectId}/`);

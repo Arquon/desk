@@ -12,7 +12,6 @@ export interface ITask extends ITaskFormState {
    createdAt: TimeStamp;
    updatedAt: TimeStamp;
    id: string;
-   userId: string;
    projectId: string;
 }
 

@@ -47,9 +47,13 @@ export const ProjectForm: FC<ProjectFormProps> = ({ initialData, buttonChildren,
             error={errors.name ?? networkErrors.name}
             onChange={(name) => changeHandler({ name })}
          />
-         <Button type="submit" disabled={isError}>
-            {buttonChildren}
-         </Button>
+         <div className="row">
+            <div className="col-6 offset-md-3">
+               <Button type="submit" disabled={isError}>
+                  {buttonChildren}
+               </Button>
+            </div>
+         </div>
       </form>
    );
 };

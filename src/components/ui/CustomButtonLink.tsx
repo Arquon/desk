@@ -1,13 +1,19 @@
-import React, { type PropsWithChildren, type FC } from "react";
+import { type PropsWithChildrenWithClassName } from "@/types/default";
+import { getClassesFromArray } from "@/utils/functions";
+import React, { type FC } from "react";
 import { Link } from "react-router-dom";
 
 interface CustomButtonLinkProps {
    to: string;
 }
 
-export const CustomButtonLink: FC<PropsWithChildren<CustomButtonLinkProps>> = ({ to, children }) => {
+export const CustomButtonLink: FC<PropsWithChildrenWithClassName<CustomButtonLinkProps>> = ({ to, children, className }) => {
+   const initialClasses = [""];
+
+   if (className) initialClasses.push(className);
+
    return (
-      <Link className="" to={to}>
+      <Link to={to} className={getClassesFromArray(initialClasses)}>
          {children}
       </Link>
    );

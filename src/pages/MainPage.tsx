@@ -7,7 +7,7 @@ export const MainPage: FC<MainPageProps> = ({}) => {
    // const { tasks } = useAppSelector((state) => state.tasks);
 
    return (
-      <section className="tasks">
+      <section className="landing">
          <div className="container">MainPage</div>
       </section>
    );

@@ -1,4 +1,4 @@
-import { type ITaskStatus } from "@/types/ITaskStatuses";
+import { type ITaskStatus } from "@/types/ITaskStatus";
 import { isStatuesAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 import { createSlice } from "@reduxjs/toolkit";
 import { createStatus, deleteStatus, fetchTaskStatuses, updateStatus } from "./actions";
@@ -56,9 +56,10 @@ const statusesSlice = createSlice({
             state.isLoadingTaskStatuses = false;
             state.statuses.filter((status) => status.id !== action.payload);
          })
-
+         // matcher
          .addMatcher(isStatuesAsyncThunkError, (state) => {
             state.isLoadingTaskStatuses = false;
+            state.lastFetchStatuses = null;
          });
    },
 });

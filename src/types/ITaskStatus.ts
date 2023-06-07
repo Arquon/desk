@@ -1,5 +1,4 @@
 export interface ITaskStatusFormState {
-   name: string;
    title: string;
    order: number;
 }
@@ -7,7 +6,6 @@ export interface ITaskStatusFormState {
 export interface ITaskStatus extends ITaskStatusFormState {
    id: string;
    projectId: string;
-   userId: string;
 }
 
 export type ITaskStatusWithoutId = Omit<ITaskStatus, "id">;

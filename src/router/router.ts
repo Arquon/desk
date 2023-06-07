@@ -1,11 +1,12 @@
+import { TasksContent } from "@/components/projects/ProjectContainer";
 import { AdminPage } from "@/pages/AdminPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { MainPage } from "@/pages/MainPage";
 import { ProjectCreatePage } from "@/pages/ProjectCreatePage";
+import { ProjectViewPage } from "@/pages/ProjectViewPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
 import { SingleTaskPage } from "@/pages/SingleTaskPage";
 import { TaskCreatePage } from "@/pages/TaskCreatePage";
-import { TasksPage } from "@/pages/TasksPage";
 import { type FC } from "react";
 import { generatePath, matchPath } from "react-router-dom";
 
@@ -17,13 +18,18 @@ export enum EBasicDefaultRoutePaths {
 export enum EBasicProjectsRoutePaths {
    allProjects = "/projects",
    newProject = "/projects/new",
+   viewProject = "/project/:projectId",
 }
 
 export enum EBasicTasksRoutePaths {
-   projectTasks = "/:projectId/tasks",
+   projectTasks = "/project/:projectId/tasks",
 }
 
-type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths;
+export enum EBasicNotesRoutePaths {
+   projectNotes = "/project/:projectId/notes",
+}
+
+type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths | EBasicNotesRoutePaths;
 
 export enum EModalDefaultRoutePaths {
    login = "/login",
@@ -34,8 +40,8 @@ export enum EModalProjectsRoutePaths {
 }
 
 export enum EModalTasksRoutePaths {
-   taskView = "/:projectId/task/:taskId",
-   taskCreate = "/:projectId/task/new",
+   taskView = "/projects/:projectId/task/:taskId",
+   taskCreate = "/projects/:projectId/task/new",
 }
 
 export interface IRouteParams {
@@ -56,9 +62,10 @@ type ModalRoutes = EModalDefaultRoutePaths | EModalProjectsRoutePaths | EModalTa
 interface IRoute {
    name: string;
    Element: FC;
+   children?: IBasicRoute[];
 }
 
-interface IBasicRoute extends IRoute {
+export interface IBasicRoute extends IRoute {
    index?: true;
    baseBackground?: never;
    path: BasicRoutes;
@@ -67,6 +74,7 @@ interface IModalRoute extends IRoute {
    index?: never;
    baseBackground: BasicRoutes;
    path: ModalRoutes;
+   children?: never;
 }
 
 const defaultRoutes: IBasicRoute[] = [
@@ -87,9 +95,21 @@ const defaultRoutes: IBasicRoute[] = [
       path: EBasicProjectsRoutePaths.allProjects,
    },
    {
-      name: "allTasks",
-      Element: TasksPage,
-      path: EBasicTasksRoutePaths.projectTasks,
+      name: "projectView",
+      Element: ProjectViewPage,
+      path: EBasicProjectsRoutePaths.viewProject,
+      children: [
+         {
+            name: "projectTasks",
+            Element: TasksContent,
+            path: EBasicTasksRoutePaths.projectTasks,
+         },
+         {
+            name: "projectNotes",
+            Element: () => null,
+            path: EBasicNotesRoutePaths.projectNotes,
+         },
+      ],
    },
 ];
 

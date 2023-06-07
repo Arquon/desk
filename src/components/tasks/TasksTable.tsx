@@ -41,7 +41,7 @@ export const TasksTable: FC<TasksTableProps> = () => {
    };
 
    return (
-      <div className="tasks__row">
+      <div className="tasks__row mb-3">
          <div className="row">
             {taskStatusesToShow.map((taskStatus) => (
                <div className="col" key={taskStatus.id}>

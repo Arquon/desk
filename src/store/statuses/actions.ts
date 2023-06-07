@@ -1,9 +1,10 @@
 import { localStorageService } from "@/services/localStorage.service";
 import { statusesService } from "@/services/statuses.service";
-import { type ITaskStatusFormState, type ITaskStatus } from "@/types/ITaskStatuses";
+import { type ITaskStatusFormState, type ITaskStatus } from "@/types/ITaskStatus";
 import { getUserId } from "@/utils/functions";
 import { tasksNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { type RootState } from "../store";
 
 const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], string, { rejectValue: string }>(
    "statuses/fetchTaskStatuses",
@@ -11,7 +12,7 @@ const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], string, { rejectValue:
       try {
          const { localId } = localStorageService.getCredentials();
          if (!localId) throw "Unauthorized";
-         const data = await statusesService.fetchStatuses(localId, projectId);
+         const data = await statusesService.fetchProjectStatuses(localId, projectId);
          return data;
       } catch (error) {
          const errorString: string = tasksNetworkErrorsHandler(error);
@@ -20,25 +21,27 @@ const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], string, { rejectValue:
    }
 );
 
-const createStatus = createAsyncThunk<ITaskStatus, { statusFormState: ITaskStatusFormState; projectId: string }, { rejectValue: string }>(
-   "statuses/createStatus",
-   async function ({ statusFormState, projectId }, { rejectWithValue }) {
-      try {
-         const userId = getUserId();
-         const data = await statusesService.createStatus({ ...statusFormState, userId, projectId });
-         return data;
-      } catch (error) {
-         const parsedError = tasksNetworkErrorsHandler(error);
-         return rejectWithValue(parsedError);
-      }
+const createStatus = createAsyncThunk<
+   ITaskStatus,
+   { statusFormState: ITaskStatusFormState; projectId: string },
+   { rejectValue: string; state: RootState }
+>("statuses/createStatus", async function ({ statusFormState, projectId }, { rejectWithValue, getState }) {
+   try {
+      const userId = getUserId(getState);
+      const data = await statusesService.createStatus(userId, { ...statusFormState, projectId });
+      return data;
+   } catch (error) {
+      const parsedError = tasksNetworkErrorsHandler(error);
+      return rejectWithValue(parsedError);
    }
-);
+});
 
-const updateStatus = createAsyncThunk<ITaskStatus, ITaskStatus, { rejectValue: string }>(
+const updateStatus = createAsyncThunk<ITaskStatus, ITaskStatus, { rejectValue: string; state: RootState }>(
    "statuses/updateStatus",
-   async function (status, { rejectWithValue }) {
+   async function (status, { rejectWithValue, getState }) {
       try {
-         const data = await statusesService.updateStatus(status);
+         const userId = getUserId(getState);
+         const data = await statusesService.updateStatus(userId, status);
          return data;
       } catch (error) {
          const parsedError = tasksNetworkErrorsHandler(error);
@@ -46,12 +49,12 @@ const updateStatus = createAsyncThunk<ITaskStatus, ITaskStatus, { rejectValue: s
       }
    }
 );
-const deleteStatus = createAsyncThunk<string, string, { rejectValue: string }>(
+const deleteStatus = createAsyncThunk<string, { statusId: string; projectId: string }, { rejectValue: string; state: RootState }>(
    "statuses/deleteStatus",
-   async function (statusId, { rejectWithValue }) {
+   async function ({ statusId, projectId }, { rejectWithValue, getState }) {
       try {
-         const userId = getUserId();
-         await statusesService.deleteStatus(userId, statusId);
+         const userId = getUserId(getState);
+         await statusesService.deleteStatus(userId, projectId, statusId);
          return statusId;
       } catch (error) {
          const parsedError = tasksNetworkErrorsHandler(error);

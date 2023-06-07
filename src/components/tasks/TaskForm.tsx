@@ -77,7 +77,7 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData }) => {
          <SelectField
             value={data.status}
             label="Статус"
-            collection={statuses.map((status) => ({ name: status.name, value: status.order }))}
+            collection={statuses.map((status) => ({ name: status.title, value: status.order }))}
             onChange={(stringStatus) => {
                changeHandler({ status: +stringStatus });
             }}

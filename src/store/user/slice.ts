@@ -6,12 +6,12 @@ import { isUserAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 
 interface IUserState {
    user: Nullable<IUserData>;
-   isLoading: boolean;
+   isLoadingUser: boolean;
 }
 
 const initialState: IUserState = {
    user: null,
-   isLoading: true,
+   isLoadingUser: true,
 };
 
 const userSlice = createSlice({
@@ -31,14 +31,14 @@ const userSlice = createSlice({
             state.user = action.payload;
          })
          .addCase(getCurrentUserData.pending, (state) => {
-            state.isLoading = true;
+            state.isLoadingUser = true;
          })
          .addCase(getCurrentUserData.fulfilled, (state, action) => {
-            state.isLoading = false;
+            state.isLoadingUser = false;
             state.user = action.payload;
          })
          .addMatcher(isUserAsyncThunkError, (state) => {
-            state.isLoading = false;
+            state.isLoadingUser = false;
          });
    },
 });

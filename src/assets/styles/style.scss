@@ -8,10 +8,11 @@ body {
 a,
 a:hover {
    color: $text-color;
+   cursor: pointer;
 }
 
-p {
-   color: $alternate-text-color;
+a:hover {
+   text-decoration: none;
 }
 
 header {
@@ -40,17 +41,32 @@ main {
    justify-content: center;
 }
 
-.admin {
+.admin,
+.project-view,
+.landing {
    padding: 100px 0;
 }
 
-.tasks {
-   padding: 100px 0;
+.btn {
+   color: $base-color;
+   background-color: $alternate-color;
 
+   &:hover {
+      color: $base-color;
+      background-color: $column-dark-color;
+      border: 1px solid $alternate-color;
+   }
+}
+
+.tasks {
    &__row {
       padding: 20px;
       background-color: $alternate-color;
       border-radius: 20px;
+
+      p {
+         color: $alternate-text-color;
+      }
    }
 
    &__column {
@@ -80,6 +96,17 @@ main {
 
 .projects {
    padding: 100px 0;
+
+   &__item {
+      background-color: $column-light-color;
+      transition: 0.3s ease;
+      text-decoration: none;
+
+      &:hover {
+         background-color: $text-color;
+         color: $column-light-color;
+      }
+   }
 }
 
 .card {

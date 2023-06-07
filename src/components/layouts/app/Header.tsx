@@ -21,19 +21,27 @@ export const Header: FC<Props> = ({}) => {
          <div className="container">
             <div className="row py-5">
                <div className="col-3">
-                  <Link to={EBasicDefaultRoutePaths.landing}>Главная</Link>
+                  <Link className="fs-5" to={EBasicDefaultRoutePaths.landing}>
+                     Главная
+                  </Link>
                </div>
                <div className="col-3 text-center">
-                  <Link to={EBasicProjectsRoutePaths.allProjects}>Мои проекты</Link>
+                  <Link className="fs-5" to={EBasicProjectsRoutePaths.allProjects}>
+                     Мои проекты
+                  </Link>
                </div>
                <div className="col-3 text-center">
-                  <Link to={EBasicDefaultRoutePaths.admin}>Админ панель</Link>
+                  <Link className="fs-5" to={EBasicDefaultRoutePaths.admin}>
+                     Админ панель
+                  </Link>
                </div>
                <div className="col-3 text-end">
                   {isAuth ? (
-                     <a onClick={signOut}>{user.email}</a>
+                     <a className="fs-5" onClick={signOut}>
+                        {user.email}
+                     </a>
                   ) : (
-                     <Link to={EModalDefaultRoutePaths.login} state={{ background: location }}>
+                     <Link className="fs-5" to={EModalDefaultRoutePaths.login} state={{ background: location }}>
                         Войти
                      </Link>
                   )}

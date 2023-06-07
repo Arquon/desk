@@ -1,3 +1,5 @@
+import { type PropsWithChildren } from "react";
+
 export type Nullable<T> = null | T;
 export type DeepPartial<T> = T extends object
    ? {
@@ -9,3 +11,7 @@ export type PartialRecord<K extends keyof any, T> = {
 };
 
 export type TimeStamp = number;
+
+export type PropsWithChildrenWithClassName<T = unknown> = PropsWithChildren<T> & {
+   className?: string;
+};

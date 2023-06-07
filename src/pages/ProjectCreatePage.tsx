@@ -1,3 +1,4 @@
+import { MediumModal } from "@/components/modals/MediumModal";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Heading } from "@/components/ui/Heading";
 import { useLocationBackground } from "@/context/LocationBackgroundContext";
@@ -28,11 +29,9 @@ export const ProjectCreatePage: FC<ProjectCreatePageProps> = () => {
    };
 
    return (
-      <div className="container p-4 ">
-         <div className="bg-white rounded shadow p-4 col-md-8 offset-md-2">
-            <Heading>Создание проекта</Heading>
-            <ProjectForm buttonChildren="Создать проект" onSubmit={onSubmitHandler} />
-         </div>
-      </div>
+      <MediumModal>
+         <Heading>Создание проекта</Heading>
+         <ProjectForm buttonChildren="Создать проект" onSubmit={onSubmitHandler} />
+      </MediumModal>
    );
 };

@@ -12,8 +12,6 @@ export const SingleTaskPage: FC<SingleTaskPageProps> = ({}) => {
 
    const currentTask = tasks.find((task) => task.id === id);
 
-   console.log({ isLoadingTasks });
-
    if (!currentTask || isLoadingTasks) {
       return <h2>Loading...</h2>;
    }
