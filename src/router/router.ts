@@ -15,34 +15,36 @@ export enum EBasicDefaultRoutePaths {
    admin = "/admin",
 }
 
+export enum EModalDefaultRoutePaths {
+   login = "/login",
+}
+
 export enum EBasicProjectsRoutePaths {
    allProjects = "/projects",
    newProject = "/projects/new",
-   viewProject = "/project/:projectId",
-}
-
-export enum EBasicTasksRoutePaths {
-   projectTasks = "/project/:projectId/tasks",
-}
-
-export enum EBasicNotesRoutePaths {
-   projectNotes = "/project/:projectId/notes",
-}
-
-type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths | EBasicNotesRoutePaths;
-
-export enum EModalDefaultRoutePaths {
-   login = "/login",
+   viewProject = "/projects/:projectId",
 }
 
 export enum EModalProjectsRoutePaths {
    projectCreate = "/projects/new",
 }
 
-export enum EModalTasksRoutePaths {
-   taskView = "/projects/:projectId/task/:taskId",
-   taskCreate = "/projects/:projectId/task/new",
+export enum EBasicTasksRoutePaths {
+   projectTasks = "/projects/:projectId/tasks",
 }
+
+export enum EModalTasksRoutePaths {
+   taskView = "/projects/:projectId/tasks/:taskId",
+   taskCreate = "/projects/:projectId/tasks/new",
+}
+
+export enum EBasicNotesRoutePaths {
+   projectNotes = "/projects/:projectId/notes",
+}
+
+type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths | EBasicNotesRoutePaths;
+
+type ModalRoutes = EModalDefaultRoutePaths | EModalProjectsRoutePaths | EModalTasksRoutePaths;
 
 export interface IRouteParams {
    projectTasks: {
@@ -56,8 +58,6 @@ export interface IRouteParams {
       projectId: string;
    };
 }
-
-type ModalRoutes = EModalDefaultRoutePaths | EModalProjectsRoutePaths | EModalTasksRoutePaths;
 
 interface IRoute {
    name: string;

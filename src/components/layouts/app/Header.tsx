@@ -2,7 +2,7 @@ import { EBasicDefaultRoutePaths, EModalDefaultRoutePaths, EBasicProjectsRoutePa
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import userActions from "@/store/user/actions";
 import React, { type FC } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface Props {}
 
@@ -10,10 +10,13 @@ export const Header: FC<Props> = ({}) => {
    const location = useLocation();
    const { user } = useAppSelector((state) => state.user);
    const dispatch = useAppDispatch();
+   const navigate = useNavigate();
+
    const isAuth = !!user;
 
    const signOut = (): void => {
       dispatch(userActions.signOut());
+      navigate("/");
    };
 
    return (

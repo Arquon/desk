@@ -1,12 +1,21 @@
 import React, { type FC } from "react";
 import { Button } from "../ui/Button";
+import { networkErrorHandlerToast } from "@/utils/functions";
 
 interface DeleteModalProps {
    text: string;
-   onDelete: () => void;
+   onDelete: () => Promise<void>;
 }
 
 export const DeleteModal: FC<DeleteModalProps> = ({ text, onDelete }) => {
+   const onDeleteHandler = async (): Promise<void> => {
+      try {
+         await onDelete();
+      } catch (error) {
+         networkErrorHandlerToast(error);
+      }
+   };
+
    return (
       <div className="container-sm">
          <div className="row">
@@ -14,7 +23,7 @@ export const DeleteModal: FC<DeleteModalProps> = ({ text, onDelete }) => {
                <p className="text-center fs-5">{text}</p>
                <div className="row">
                   <div className="col-6 offset-md-3">
-                     <Button onClick={onDelete} type="button">
+                     <Button onClick={onDeleteHandler} type="button">
                         Удалить
                      </Button>
                   </div>

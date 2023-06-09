@@ -8,7 +8,7 @@ import { useNetworkErrors } from "@/hooks/useNetworkErrors";
 
 interface ProjectFormProps {
    initialData?: IProjectFormState;
-   buttonChildren: string;
+   buttonText: string;
    onSubmit: (data: IProjectFormState) => Promise<void>;
 }
 
@@ -24,7 +24,7 @@ const validatorConfig: TValidator<IProjectFormState> = {
    },
 };
 
-export const ProjectForm: FC<ProjectFormProps> = ({ initialData, buttonChildren, onSubmit }) => {
+export const ProjectForm: FC<ProjectFormProps> = ({ initialData, buttonText, onSubmit }) => {
    const { data, changeHandler, errors } = useForm({ initialData: initialData ?? defaultData, validatorConfig });
    const { networkErrors, networkErrorHandler } = useNetworkErrors(data);
 
@@ -50,7 +50,7 @@ export const ProjectForm: FC<ProjectFormProps> = ({ initialData, buttonChildren,
          <div className="row">
             <div className="col-6 offset-md-3">
                <Button type="submit" disabled={isError}>
-                  {buttonChildren}
+                  {buttonText}
                </Button>
             </div>
          </div>

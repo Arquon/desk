@@ -4,6 +4,7 @@ import { PortalModal } from "@/components/portal/PortalModal";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
+import { LightSpinner, Spinner } from "@/components/ui/Spinner";
 import { AuthRequire } from "@/hoc/AuthRequire";
 import { useProjectView } from "@/hooks/useProjectView";
 import { EBasicProjectsRoutePaths, type IRouteParams } from "@/router/router";
@@ -23,9 +24,9 @@ enum ETasksPageModal {
 export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
    const { isLoadingTasks } = useAppSelector((state) => state.tasks);
    const { isLoadingTaskStatuses } = useAppSelector((state) => state.statuses);
-   const { isLoadingSingleProject, currentProject } = useAppSelector((state) => state.projects);
+   const { isLoadingFetchSingleProject, currentProject } = useAppSelector((state) => state.projects);
 
-   const isLoading = isLoadingSingleProject || isLoadingTasks || isLoadingTaskStatuses || !currentProject;
+   const isLoading = isLoadingFetchSingleProject || isLoadingTasks || isLoadingTaskStatuses || !currentProject;
 
    const { projectId } = useParams<IRouteParams["projectTasks"]>();
    const navigate = useNavigate();
@@ -33,6 +34,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
    const { deleteProject, updateProject, fetchProjectInfo } = useProjectView();
 
    const [currentModalShow, setCurrentModalShow] = useState<Nullable<ETasksPageModal>>(null);
+   const [isLoadingEditSingleProject, setIsLoadingEditSingleProject] = useState(false);
 
    const openDeleteModal = (): void => {
       setCurrentModalShow(ETasksPageModal.delete);
@@ -46,13 +48,23 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
 
    const onDeleteHandler = async (): Promise<void> => {
       if (!currentProject) return;
-      await deleteProject(currentProject.id);
-      navigate(EBasicProjectsRoutePaths.allProjects);
+      setIsLoadingEditSingleProject(true);
+      try {
+         await deleteProject(currentProject.id);
+         navigate(EBasicProjectsRoutePaths.allProjects);
+      } finally {
+         setIsLoadingEditSingleProject(false);
+      }
    };
-   const onUpdateHandler = async (projectState: IProjectFormState): Promise<void> => {
+   const onUpdateSubmit = async (projectState: IProjectFormState): Promise<void> => {
       if (!currentProject) return;
-      updateProject({ ...currentProject, ...projectState });
-      closeModal();
+      setIsLoadingEditSingleProject(true);
+      try {
+         await updateProject({ ...currentProject, ...projectState });
+         closeModal();
+      } finally {
+         setIsLoadingEditSingleProject(false);
+      }
    };
 
    useEffect(() => {
@@ -66,7 +78,9 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
                {/* <ProjectTabs/> */}
 
                {isLoading ? (
-                  <h2>Loading...</h2>
+                  <div className="d-flex justify-content-center">
+                     <Spinner />
+                  </div>
                ) : (
                   <>
                      <div className="row mb-3">
@@ -90,14 +104,16 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
          </section>
          {currentModalShow !== null && currentProject && (
             <PortalModal onBackgroundClick={closeModal}>
-               {currentModalShow === ETasksPageModal.delete && (
+               {isLoadingEditSingleProject && <LightSpinner />}
+
+               {currentModalShow === ETasksPageModal.delete && !isLoadingEditSingleProject && (
                   <DeleteModal text="Вы уверены что хотите удалить проект?" onDelete={onDeleteHandler} />
                )}
 
                {currentModalShow === ETasksPageModal.edit && (
-                  <MediumModal>
+                  <MediumModal hidden={isLoadingEditSingleProject}>
                      <Heading>Обновление проекта</Heading>
-                     <ProjectForm buttonChildren="Создать проект" onSubmit={onUpdateHandler} initialData={currentProject} />
+                     <ProjectForm buttonText="Обновить проект" onSubmit={onUpdateSubmit} initialData={currentProject} />
                   </MediumModal>
                )}
             </PortalModal>

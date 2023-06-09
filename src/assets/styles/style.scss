@@ -52,8 +52,8 @@ main {
    background-color: $alternate-color;
 
    &:hover {
-      color: $base-color;
-      background-color: $column-dark-color;
+      color: $text-color;
+      background-color: $column-light-color;
       border: 1px solid $alternate-color;
    }
 }

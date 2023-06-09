@@ -13,7 +13,7 @@ export const TasksContent: FC<TasksPageProps> = ({}) => {
          {currentProject && (
             <>
                <TasksTable />
-               <CustomButtonLink to={`/${currentProject.id}/task/new`}>Создать задачу</CustomButtonLink>
+               <CustomButtonLink to={`new`}>Создать задачу</CustomButtonLink>
             </>
          )}
       </>

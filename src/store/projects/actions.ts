@@ -1,20 +1,18 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { type IProject, type TProjectWithoutId } from "@/types/IProject";
+import { type IProjectFormState, type IProject } from "@/types/IProject";
 import { projectNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { projectsService } from "@/services/projects.service";
-import { localStorageService } from "@/services/localStorage.service";
-import { getUserId } from "@/utils/functions";
+import { delay, getUserId } from "@/utils/functions";
 import { statusesService } from "@/services/statuses.service";
 import { tasksService } from "@/services/tasks.service";
 import { type RootState } from "../store";
 
-const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: string }>(
+const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: string; state: RootState }>(
    "projects/fetchProjects",
-   async function (_, { rejectWithValue }) {
+   async function (_, { rejectWithValue, getState }) {
       try {
-         const { localId } = localStorageService.getCredentials();
-         if (!localId) throw "Unauthorized";
-         const data = await projectsService.fetchProjects(localId);
+         const userId = getUserId(getState);
+         const data = await projectsService.fetchProjects(userId);
          return data;
       } catch (error) {
          const parsedError = projectNetworkErrorsHandler(error);
@@ -37,11 +35,15 @@ const fetchSingleProject = createAsyncThunk<IProject, string, { rejectValue: str
    }
 );
 
-const createProject = createAsyncThunk<IProject, TProjectWithoutId, { rejectValue: string }>(
+const createProject = createAsyncThunk<IProject, IProjectFormState, { rejectValue: string; state: RootState }>(
    "projects/createProject",
-   async function (projectState, { rejectWithValue }) {
+   async function (projectState, { rejectWithValue, getState }) {
       try {
-         const data = await projectsService.createProject({ ...projectState });
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
+         const userId = getUserId(getState);
+         const data = await projectsService.createProject({ ...projectState, userId });
          await statusesService.createDefaultProjectStatuses(data.userId, data.id);
          return data;
       } catch (error) {
@@ -55,6 +57,9 @@ const updateProject = createAsyncThunk<IProject, IProject, { rejectValue: string
    "projects/updateProject",
    async function (project, { rejectWithValue }) {
       try {
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
          const data = await projectsService.updateProject(project);
          return data;
       } catch (error) {
@@ -68,6 +73,9 @@ const deleteProject = createAsyncThunk<string, string, { rejectValue: string; st
    "projects/deleteProject",
    async function (projectId, { rejectWithValue, getState }) {
       try {
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          await projectsService.deleteProject(userId, projectId);
          await Promise.all([statusesService.deleteProjectStatuses(userId, projectId), tasksService.deleteProjectTasks(userId, projectId)]);
