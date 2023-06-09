@@ -3,6 +3,7 @@ import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Heading } from "@/components/ui/Heading";
 import { LightSpinner } from "@/components/ui/Spinner";
 import { useLocationBackground } from "@/context/LocationBackgroundContext";
+import { AuthRequire } from "@/hoc/AuthRequire";
 import projectsActions from "@/store/projects/actions";
 import { useAppDispatch } from "@/store/store";
 import { type IProjectFormState } from "@/types/IProject";
@@ -12,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 interface ProjectCreatePageProps {}
 
-export const ProjectCreatePage: FC<ProjectCreatePageProps> = () => {
+export const ProjectCreatePageComponent: FC<ProjectCreatePageProps> = () => {
    const dispatch = useAppDispatch();
 
    const navigate = useNavigate();
@@ -46,3 +47,9 @@ export const ProjectCreatePage: FC<ProjectCreatePageProps> = () => {
       </>
    );
 };
+
+export const ProjectCreatePage: FC<ProjectCreatePageProps> = (props) => (
+   <AuthRequire>
+      <ProjectCreatePageComponent {...props} />
+   </AuthRequire>
+);

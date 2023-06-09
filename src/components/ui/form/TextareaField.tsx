@@ -1,8 +1,41 @@
 import { type ICommonTextInputProps } from "@/types/ICommonInputProps";
-import React, { type FC } from "react";
+import { getClassNameFromArray } from "@/utils/functions";
+import React, { useRef, type FC, type ChangeEvent } from "react";
 
 interface TextAreaFieldProps extends ICommonTextInputProps {}
 
-export const TextareaField: FC<TextAreaFieldProps> = ({}) => {
-   return <div>TextareaField</div>;
+export const TextareaField: FC<TextAreaFieldProps> = ({ value, label, error, onChange }) => {
+   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+   const onClickLabelHandler = (): void => {
+      if (!textareaRef.current) return;
+      textareaRef.current.focus();
+   };
+
+   const onChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+      onChange(event.target.value);
+   };
+
+   const inputClassName = ["form-control"];
+   if (error) {
+      inputClassName.push("is-invalid");
+   }
+
+   return (
+      <div className="mb-3">
+         <label className="form-label" onClick={onClickLabelHandler}>
+            {label}
+         </label>
+         <div className="input-group">
+            <textarea
+               className={getClassNameFromArray(inputClassName)}
+               rows={3}
+               onChange={onChangeHandler}
+               value={value}
+               ref={textareaRef}
+            ></textarea>
+            {error && <div className="invalid-feedback">{error}</div>}
+         </div>
+      </div>
+   );
 };

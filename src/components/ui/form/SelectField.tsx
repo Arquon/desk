@@ -18,11 +18,13 @@ export const SelectField = <T extends string | number>({ value, onChange, collec
    };
 
    return (
-      <div>
-         <label>{label}</label>
-         <select value={value} onChange={onChangeHandler}>
+      <div className="mb-3">
+         <label className="form-label">{label}</label>
+         <select className="form-select" value={value} onChange={onChangeHandler}>
             {collection.map((item) => (
-               <option value={item.value}>{item.name}</option>
+               <option value={item.value} key={item.value}>
+                  {item.name}
+               </option>
             ))}
          </select>
       </div>

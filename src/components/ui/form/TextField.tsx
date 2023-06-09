@@ -1,5 +1,5 @@
 import { type ICommonTextInputProps } from "@/types/ICommonInputProps";
-import { getClassesFromArray } from "@/utils/functions";
+import { getClassNameFromArray } from "@/utils/functions";
 import React, { useRef, type FC, type ChangeEvent } from "react";
 
 interface TextFieldProps extends ICommonTextInputProps {
@@ -30,7 +30,7 @@ export const TextField: FC<TextFieldProps> = ({ value, type = "text", label, err
          </label>
 
          <div className="input-group">
-            <input type={type} className={getClassesFromArray(inputClassName)} onChange={onChangeHandler} value={value} ref={inputRef} />
+            <input type={type} className={getClassNameFromArray(inputClassName)} onChange={onChangeHandler} value={value} ref={inputRef} />
             {error && <div className="invalid-feedback">{error}</div>}
          </div>
       </div>

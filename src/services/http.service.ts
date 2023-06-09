@@ -4,7 +4,6 @@ import { localStorageService } from "./localStorage.service";
 import { authService } from "./auth.service";
 
 function fireBaseDataParse(response: AxiosResponse<any, any>): any {
-   console.log({ response });
    const { data } = response;
    if (data === null && response.config.method?.toLocaleLowerCase() !== "delete") {
       throw new AxiosError("CustomError", "NOT_FOUND", undefined, undefined, {

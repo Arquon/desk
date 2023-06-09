@@ -5,7 +5,7 @@ import { MainPage } from "@/pages/MainPage";
 import { ProjectCreatePage } from "@/pages/ProjectCreatePage";
 import { ProjectViewPage } from "@/pages/ProjectViewPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
-import { SingleTaskPage } from "@/pages/SingleTaskPage";
+import { TaskViewPage } from "@/pages/TaskViewPage";
 import { TaskCreatePage } from "@/pages/TaskCreatePage";
 import { type FC } from "react";
 import { generatePath, matchPath } from "react-router-dom";
@@ -47,6 +47,9 @@ type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTa
 type ModalRoutes = EModalDefaultRoutePaths | EModalProjectsRoutePaths | EModalTasksRoutePaths;
 
 export interface IRouteParams {
+   viewProject: {
+      projectId: string;
+   };
    projectTasks: {
       projectId: string;
    };
@@ -55,6 +58,9 @@ export interface IRouteParams {
       taskId: string;
    };
    taskCreate: {
+      projectId: string;
+   };
+   projectNotes: {
       projectId: string;
    };
 }
@@ -140,7 +146,7 @@ const tasksModalRoutes: IModalRoute[] = [
    },
    {
       name: "taskView",
-      Element: SingleTaskPage,
+      Element: TaskViewPage,
       baseBackground: EBasicTasksRoutePaths.projectTasks,
       path: EModalTasksRoutePaths.taskView,
    },

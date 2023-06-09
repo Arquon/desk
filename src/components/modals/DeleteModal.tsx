@@ -1,6 +1,6 @@
 import React, { type FC } from "react";
 import { Button } from "../ui/Button";
-import { networkErrorHandlerToast } from "@/utils/functions";
+import { toastError } from "@/utils/functions";
 
 interface DeleteModalProps {
    text: string;
@@ -12,7 +12,7 @@ export const DeleteModal: FC<DeleteModalProps> = ({ text, onDelete }) => {
       try {
          await onDelete();
       } catch (error) {
-         networkErrorHandlerToast(error);
+         toastError(error);
       }
    };
 

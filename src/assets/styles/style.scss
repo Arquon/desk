@@ -1,6 +1,6 @@
 body {
    background-color: $base-color;
-   font-family: "Rubik";
+   font-family: "Rubik", Arial, Helvetica, sans-serif;
    min-height: 100vh;
    color: $text-color;
 }
@@ -53,13 +53,22 @@ main {
 
    &:hover {
       color: $text-color;
-      background-color: $column-light-color;
+      background-color: $my-card-color;
       border: 1px solid $alternate-color;
+   }
+
+   &_alternate {
+      color: $alternate-color;
+      background-color: $base-color;
+
+      &:hover {
+         background-color: $my-card-color;
+      }
    }
 }
 
 .tasks {
-   &__row {
+   &__table {
       padding: 20px;
       background-color: $alternate-color;
       border-radius: 20px;
@@ -69,12 +78,33 @@ main {
       }
    }
 
+   &__row {
+      display: flex;
+   }
+
+   &__heading {
+      flex: 1 0 0%;
+      margin-right: 10px;
+      min-width: 250px;
+
+      &:last-child {
+         margin-right: 0;
+      }
+   }
+
    &__column {
       padding: 10px;
       background-color: $column-light-color;
       border-radius: 10px;
       transition: background-color 0.4s ease;
       min-height: 320px;
+      flex: 1 0 0%;
+      margin-right: 10px;
+      min-width: 250px;
+
+      &:last-child {
+         margin-right: 0;
+      }
 
       &_over {
          background-color: $column-dark-color;
@@ -83,13 +113,14 @@ main {
 
    &__item {
       display: block;
-      margin: 0px 0px 20px 0px;
+      margin: 0px 0px 5px 0px;
+
       &:last-child {
          margin: 0px 0px 0px 0px;
       }
 
       &_fantom {
-         min-height: 150px;
+         min-height: 50px;
       }
    }
 }
@@ -109,9 +140,31 @@ main {
    }
 }
 
-.card {
-   min-height: 300px;
-   padding: 15px;
+.task-card {
+   padding: 20px 15px;
    background-color: $my-card-color;
    border: none;
+   display: flex;
+   border-radius: 5px;
+   align-items: center;
+
+   &__content {
+   }
+}
+
+input {
+   font-size: 14px;
+   border-radius: 4px;
+   box-shadow: inset 0 2px 2px #e9e9e9;
+   border: 1px solid #aeaeae;
+   line-height: 16px;
+   padding: 6px 10px 5px;
+}
+
+.react-datepicker__input-container {
+   width: auto;
+}
+
+.react-datepicker-wrapper {
+   display: block;
 }

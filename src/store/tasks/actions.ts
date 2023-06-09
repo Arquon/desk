@@ -2,13 +2,16 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type ITaskFormState, type ITask } from "@/types/ITask";
 import { tasksNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { tasksService } from "@/services/tasks.service";
-import { getUserId } from "@/utils/functions";
+import { delay, getUserId } from "@/utils/functions";
 import { type RootState } from "../store";
 
 const fetchTasks = createAsyncThunk<ITask[], string, { rejectValue: string; state: RootState }>(
    "tasks/fetchTasks",
    async function (projectId, { rejectWithValue, getState }) {
       try {
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          const data = await tasksService.fetchTasks(userId, projectId);
          return data;
@@ -23,6 +26,9 @@ const createTask = createAsyncThunk<ITask, { taskFormState: ITaskFormState; proj
    "tasks/createTask",
    async function ({ taskFormState, projectId }, { rejectWithValue, getState }) {
       try {
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          const now = new Date().getTime();
          const data = await tasksService.createTask(userId, { ...taskFormState, projectId, createdAt: now, updatedAt: now });
@@ -52,6 +58,9 @@ const deleteTask = createAsyncThunk<string, { taskId: string; projectId: string 
    "tasks/deleteTask",
    async ({ taskId, projectId }, { rejectWithValue, getState }) => {
       try {
+         // await delay(1000);
+         // const testError = "testError";
+         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          await tasksService.deleteTask(userId, projectId, taskId);
          return taskId;

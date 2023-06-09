@@ -6,13 +6,13 @@ import { type Nullable, type TimeStamp } from "@/types/default";
 
 interface IStatusesState {
    statuses: ITaskStatus[];
-   isLoadingTaskStatuses: boolean;
+   isLoadingStatuses: boolean;
    lastFetchStatuses: Nullable<TimeStamp>;
 }
 
 const initialState: IStatusesState = {
    statuses: [],
-   isLoadingTaskStatuses: true,
+   isLoadingStatuses: true,
    lastFetchStatuses: null,
 };
 
@@ -23,25 +23,25 @@ const statusesSlice = createSlice({
    extraReducers(builder) {
       builder
          .addCase(fetchTaskStatuses.pending, (state) => {
-            state.isLoadingTaskStatuses = true;
+            state.isLoadingStatuses = true;
          })
          .addCase(fetchTaskStatuses.fulfilled, (state, action) => {
-            state.isLoadingTaskStatuses = false;
+            state.isLoadingStatuses = false;
             state.statuses = action.payload;
             state.lastFetchStatuses = new Date().getTime();
          })
          .addCase(createStatus.pending, (state) => {
-            state.isLoadingTaskStatuses = true;
+            state.isLoadingStatuses = true;
          })
          .addCase(createStatus.fulfilled, (state, action) => {
-            state.isLoadingTaskStatuses = false;
+            state.isLoadingStatuses = false;
             state.statuses.push(action.payload);
          })
          .addCase(updateStatus.pending, (state) => {
-            state.isLoadingTaskStatuses = true;
+            state.isLoadingStatuses = true;
          })
          .addCase(updateStatus.fulfilled, (state, action) => {
-            state.isLoadingTaskStatuses = false;
+            state.isLoadingStatuses = false;
             state.statuses = state.statuses.map((status) => {
                if (action.payload.id === status.id) {
                   return action.payload;
@@ -50,15 +50,15 @@ const statusesSlice = createSlice({
             });
          })
          .addCase(deleteStatus.pending, (state) => {
-            state.isLoadingTaskStatuses = true;
+            state.isLoadingStatuses = true;
          })
          .addCase(deleteStatus.fulfilled, (state, action) => {
-            state.isLoadingTaskStatuses = false;
-            state.statuses.filter((status) => status.id !== action.payload);
+            state.isLoadingStatuses = false;
+            state.statuses = state.statuses.filter((status) => status.id !== action.payload);
          })
          // matcher
          .addMatcher(isStatuesAsyncThunkError, (state) => {
-            state.isLoadingTaskStatuses = false;
+            state.isLoadingStatuses = false;
             state.lastFetchStatuses = null;
          });
    },

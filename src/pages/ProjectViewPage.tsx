@@ -11,6 +11,7 @@ import { EBasicProjectsRoutePaths, type IRouteParams } from "@/router/router";
 import { useAppSelector } from "@/store/store";
 import { type IProjectFormState } from "@/types/IProject";
 import { type Nullable } from "@/types/default";
+import { toastError } from "@/utils/functions";
 import React, { useState, type FC, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
@@ -22,11 +23,11 @@ enum ETasksPageModal {
 }
 
 export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
-   const { isLoadingTasks } = useAppSelector((state) => state.tasks);
-   const { isLoadingTaskStatuses } = useAppSelector((state) => state.statuses);
-   const { isLoadingFetchSingleProject, currentProject } = useAppSelector((state) => state.projects);
+   const { isLoadingTasks, lastFetchTasks } = useAppSelector((state) => state.tasks);
+   const { isLoadingStatuses, lastFetchStatuses } = useAppSelector((state) => state.statuses);
+   const { isLoadingSingleProject, currentProject, lastFetchSingleProject } = useAppSelector((state) => state.projects);
 
-   const isLoading = isLoadingFetchSingleProject || isLoadingTasks || isLoadingTaskStatuses || !currentProject;
+   const isLoading = isLoadingSingleProject || isLoadingTasks || isLoadingStatuses || !currentProject;
 
    const { projectId } = useParams<IRouteParams["projectTasks"]>();
    const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
 
    const [currentModalShow, setCurrentModalShow] = useState<Nullable<ETasksPageModal>>(null);
    const [isLoadingEditSingleProject, setIsLoadingEditSingleProject] = useState(false);
+   const [firstLoad, setFirstLoad] = useState(false);
 
    const openDeleteModal = (): void => {
       setCurrentModalShow(ETasksPageModal.delete);
@@ -67,14 +69,47 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
       }
    };
 
+   const firstLoadProjectInfo = async (projectId: string): Promise<void> => {
+      try {
+         fetchProjectInfo(projectId, projectId !== currentProject?.id);
+         setFirstLoad(true);
+      } catch (error) {
+         toastError(error);
+      }
+   };
+
+   const loadProjectInfo = async (projectId: string): Promise<void> => {
+      try {
+         fetchProjectInfo(projectId, projectId !== currentProject?.id);
+      } catch (error) {
+         toastError(error);
+      }
+   };
+
    useEffect(() => {
-      if (projectId) fetchProjectInfo(projectId, projectId !== currentProject?.id);
-   }, [projectId]);
+      if (!projectId) return;
+      firstLoadProjectInfo(projectId);
+   }, []);
+
+   useEffect(() => {
+      if (!projectId || !firstLoad || lastFetchTasks !== null) return;
+      loadProjectInfo(projectId);
+   }, [lastFetchTasks]);
+
+   useEffect(() => {
+      if (!projectId || !firstLoad || lastFetchSingleProject !== null) return;
+      loadProjectInfo(projectId);
+   }, [lastFetchSingleProject]);
+
+   useEffect(() => {
+      if (!projectId || !firstLoad || lastFetchStatuses !== null) return;
+      loadProjectInfo(projectId);
+   }, [lastFetchStatuses]);
 
    return (
       <>
          <section className="project-view">
-            <div className="container">
+            <div className="container-xl">
                {/* <ProjectTabs/> */}
 
                {isLoading ? (

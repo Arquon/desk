@@ -1,5 +1,5 @@
 import { type PropsWithChildrenWithClassName } from "@/types/default";
-import { getClassesFromArray } from "@/utils/functions";
+import { getClassNameFromArray } from "@/utils/functions";
 import React, { type FC } from "react";
 import { Link } from "react-router-dom";
 
@@ -13,7 +13,7 @@ export const CustomButtonLink: FC<PropsWithChildrenWithClassName<CustomButtonLin
    if (className) initialClasses.push(className);
 
    return (
-      <Link to={to} className={getClassesFromArray(initialClasses)}>
+      <Link to={to} className={getClassNameFromArray(initialClasses)}>
          {children}
       </Link>
    );

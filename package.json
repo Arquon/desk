@@ -13,6 +13,7 @@
    "devDependencies": {
       "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
       "@types/react": "^18.0.30",
+      "@types/react-datepicker": "^4.11.2",
       "@types/react-dom": "^18.0.11",
       "@types/redux-logger": "^3.0.9",
       "cross-env": "^7.0.3",
@@ -47,7 +48,7 @@
       "bootstrap": "^5.2.3",
       "dotenv-webpack": "^8.0.1",
       "react": "^18.2.0",
-      "react-datepicker": "^4.12.0",
+      "react-datepicker": "^4.10.0",
       "react-dom": "^18.2.0",
       "react-redux": "^8.0.5",
       "react-router-dom": "^6.11.2",

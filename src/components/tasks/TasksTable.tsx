@@ -4,6 +4,10 @@ import { type ITask, type TFilteredTasks } from "@/types/ITask";
 import { type Nullable } from "@/types/default";
 import React, { useState, type FC } from "react";
 import { ColumnTask } from "./TasksColumn";
+import { PortalModal } from "../portal/PortalModal";
+import { LightSpinner } from "../ui/Spinner";
+import { toastError } from "@/utils/functions";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 interface TasksTableProps {}
 
@@ -29,39 +33,57 @@ export const TasksTable: FC<TasksTableProps> = () => {
    }
 
    const [currentTask, setCurrentTask] = useState<Nullable<ITask>>(null);
+   const [isLoadingUpdateTaskStatus, setIsLoadingUpdateTaskStatus] = useState(false);
 
    const onDragStartHandler = (task: ITask): void => {
       setCurrentTask(task);
    };
 
-   const onDropHandler = (newStatus: string): void => {
+   const onDropHandler = async (newStatus: string): Promise<void> => {
       if (!currentTask) return;
-      dispatch(tasksActions.updateTask({ ...currentTask, status: +newStatus }));
-      setCurrentTask(null);
+      setIsLoadingUpdateTaskStatus(true);
+      try {
+         unwrapResult(await dispatch(tasksActions.updateTask({ ...currentTask, status: +newStatus })));
+         setCurrentTask(null);
+      } catch (error) {
+         toastError(error);
+      } finally {
+         setIsLoadingUpdateTaskStatus(false);
+      }
    };
 
    return (
-      <div className="tasks__row mb-3">
-         <div className="row">
-            {taskStatusesToShow.map((taskStatus) => (
-               <div className="col" key={taskStatus.id}>
-                  <p className="text-center">{taskStatus.title}</p>
+      <>
+         <div className="tasks__table mb-3">
+            <div style={{ overflow: "auto" }}>
+               <div style={{ minWidth: 1000 }}>
+                  <div className="tasks__row">
+                     {taskStatusesToShow.map((taskStatus) => (
+                        <div className="tasks__heading" key={taskStatus.id}>
+                           <p className="text-center">{taskStatus.title}</p>
+                        </div>
+                     ))}
+                  </div>
+                  <div className="tasks__row">
+                     {Object.entries(filteredTasks).map(([key, tasks]) => (
+                        <ColumnTask
+                           key={key}
+                           tasks={tasks}
+                           onDragStart={onDragStartHandler}
+                           onDrop={async () => await onDropHandler(key)}
+                           currentTaskStatus={currentTask?.status}
+                           columnStatus={+key}
+                        />
+                     ))}
+                  </div>
                </div>
-            ))}
+            </div>
          </div>
-         <div className="row">
-            {Object.entries(filteredTasks).map(([key, tasks]) => (
-               <div className="col" key={key}>
-                  <ColumnTask
-                     tasks={tasks}
-                     onDragStart={onDragStartHandler}
-                     onDrop={() => onDropHandler(key)}
-                     currentTaskStatus={currentTask?.status}
-                     columnStatus={+key}
-                  />
-               </div>
-            ))}
-         </div>
-      </div>
+         {isLoadingUpdateTaskStatus && (
+            <PortalModal onBackgroundClick={() => {}}>
+               <LightSpinner />
+            </PortalModal>
+         )}
+      </>
    );
 };

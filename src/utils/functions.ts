@@ -3,7 +3,7 @@ import { type Nullable, type TimeStamp } from "@/types/default";
 import { toast } from "react-toastify";
 const REFRESH_DATA_TIME = 60 * 60 * 1000;
 
-export function getClassesFromArray(classes: string[]): undefined | string {
+export function getClassNameFromArray(classes: string[]): undefined | string {
    if (classes.length === 0) return undefined;
    return classes.join(" ");
 }
@@ -26,8 +26,12 @@ export async function delay(ms: number): Promise<void> {
    });
 }
 
-export function networkErrorHandlerToast(error: unknown): void {
+export function toastSuccess(message: string): void {
+   toast.success(message, { autoClose: 3000 });
+}
+
+export function toastError(error: unknown): void {
    if (typeof error === "string") {
-      toast.error(error, { autoClose: 5000 });
+      toast.error(error, { autoClose: 3000 });
    }
 }

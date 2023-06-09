@@ -9,8 +9,7 @@ interface IProjectsState {
    isLoadingProjects: boolean;
    lastFetchProjects: Nullable<TimeStamp>;
    currentProject: Nullable<IProject>;
-   isLoadingFetchSingleProject: boolean;
-   isLoadingEditSingleProject: boolean;
+   isLoadingSingleProject: boolean;
    lastFetchSingleProject: Nullable<TimeStamp>;
 }
 
@@ -19,8 +18,7 @@ const initialState: IProjectsState = {
    isLoadingProjects: true,
    lastFetchProjects: null,
    currentProject: null,
-   isLoadingFetchSingleProject: true,
-   isLoadingEditSingleProject: false,
+   isLoadingSingleProject: true,
    lastFetchSingleProject: null,
 };
 
@@ -44,12 +42,12 @@ const projectSlice = createSlice({
          })
          // fetchSingleProject
          .addCase(fetchSingleProject.pending, (state) => {
-            state.isLoadingFetchSingleProject = true;
+            state.isLoadingSingleProject = true;
          })
          .addCase(fetchSingleProject.fulfilled, (state, action) => {
             state.currentProject = action.payload;
             state.lastFetchSingleProject = new Date().getTime();
-            state.isLoadingFetchSingleProject = false;
+            state.isLoadingSingleProject = false;
          })
          .addCase(fetchSingleProject.rejected, (state) => {
             state.isLoadingProjects = false;

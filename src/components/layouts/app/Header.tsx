@@ -1,3 +1,4 @@
+import { Container } from "@/components/ui/Container";
 import { EBasicDefaultRoutePaths, EModalDefaultRoutePaths, EBasicProjectsRoutePaths } from "@/router/router";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import userActions from "@/store/user/actions";
@@ -21,7 +22,7 @@ export const Header: FC<Props> = ({}) => {
 
    return (
       <header>
-         <div className="container">
+         <Container>
             <div className="row py-5">
                <div className="col-3">
                   <Link className="fs-5" to={EBasicDefaultRoutePaths.landing}>
@@ -50,7 +51,7 @@ export const Header: FC<Props> = ({}) => {
                   )}
                </div>
             </div>
-         </div>
+         </Container>
       </header>
    );
 };

@@ -1,6 +1,6 @@
 import { type ITask } from "@/types/ITask";
 import React, { useRef, type FC, useState } from "react";
-import { CardTask } from "./TaskCard";
+import { TaskCard } from "./TaskCard";
 
 interface ColumnTaskProps {
    onDragStart: (task: ITask) => void;
@@ -47,7 +47,7 @@ export const ColumnTask: FC<ColumnTaskProps> = ({ tasks, onDragStart, onDrop, cu
          ref={columnRef}
       >
          {tasks.map((task) => (
-            <CardTask key={task.id} {...task} onDragStart={() => onDragStart(task)} />
+            <TaskCard key={task.id} {...task} onDragStart={() => onDragStart(task)} />
          ))}
          {isFantomDiv && <div className="tasks__item tasks__item_fantom"></div>}
       </div>

@@ -2,17 +2,18 @@ import { useForm } from "@/hooks/useForm";
 import { useNetworkErrors } from "@/hooks/useNetworkErrors";
 import { type ITaskFormState } from "@/types/ITask";
 import { type TValidator } from "@/utils/validator/validator";
-import React, { type FC } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { type FormEvent, type FC } from "react";
 import { TextField } from "../ui/form/TextField";
 import { DateField } from "../ui/form/DateField";
 import { SelectField } from "../ui/form/SelectField";
 import { useAppSelector } from "@/store/store";
 import { Button } from "../ui/Button";
-import { useLocationBackground } from "@/context/LocationBackgroundContext";
+import { TextareaField } from "../ui/form/TextareaField";
 
 interface TaskFormProps {
    initialData?: ITaskFormState;
+   onSubmit: (data: ITaskFormState) => Promise<void>;
+   buttonText: string;
 }
 
 const defaultData: ITaskFormState = {
@@ -29,26 +30,20 @@ const validatorConfig: TValidator<ITaskFormState> = {
          message: "Укажите название задачи",
       },
    },
-   description: {
-      isRequired: {
-         message: "Укажите описание задачи",
-      },
-   },
 };
 
-export const TaskForm: FC<TaskFormProps> = ({ initialData }) => {
+export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit }) => {
    const { data, changeHandler, errors } = useForm({
       initialData: initialData ?? defaultData,
       validatorConfig,
    });
    const { networkErrors, networkErrorHandler } = useNetworkErrors(data);
-   const navigate = useNavigate();
    const { statuses } = useAppSelector((state) => state.statuses);
-   const locationBackground = useLocationBackground();
 
-   const onSubmitHandler = async (): Promise<void> => {
+   const onSubmitHandler = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+      event.preventDefault();
       try {
-         navigate(locationBackground ?? "/");
+         await onSubmit(data);
       } catch (error) {
          networkErrorHandler(error);
       }
@@ -66,7 +61,7 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData }) => {
             }}
             error={errors.title ?? networkErrors.title}
          />
-         <TextField
+         <TextareaField
             value={data.description}
             label="Описание"
             onChange={(description) => {
@@ -82,11 +77,32 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData }) => {
                changeHandler({ status: +stringStatus });
             }}
          />
-         <DateField value={data.startAt} onChange={() => {}} />
-         <DateField value={data.endAt} onChange={() => {}} />
-         <Button disabled={isError} type="submit">
-            Добавить задачу
-         </Button>
+         <div className="d-flex flex-wrap">
+            <DateField
+               value={data.startAt}
+               onChange={(startAt) => {
+                  changeHandler({ startAt });
+               }}
+               maxDate={data.endAt}
+               label="Начало выполнения задачи"
+            />
+
+            <DateField
+               value={data.endAt}
+               onChange={(endAt) => {
+                  changeHandler({ endAt });
+               }}
+               minDate={data.startAt}
+               label="Окончание выполнения задачи"
+            />
+         </div>
+         <div className="row">
+            <div className="col-md-8 offset-md-2">
+               <Button type="submit" disabled={isError}>
+                  {buttonText}
+               </Button>
+            </div>
+         </div>
       </form>
    );
 };

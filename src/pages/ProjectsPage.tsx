@@ -4,7 +4,7 @@ import { AuthRequire } from "@/hoc/AuthRequire";
 import { EBasicProjectsRoutePaths } from "@/router/router";
 import projectsActions from "@/store/projects/actions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { isOutDated, networkErrorHandlerToast } from "@/utils/functions";
+import { isOutDated, toastError } from "@/utils/functions";
 import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, type FC } from "react";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ export const ProjectsPageComponent: FC<ProjectsPageProps> = ({}) => {
             unwrapResult(await dispatch(projectsActions.fetchProjects()));
          }
       } catch (error) {
-         networkErrorHandlerToast(error);
+         toastError(error);
       }
    };
 

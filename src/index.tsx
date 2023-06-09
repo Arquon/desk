@@ -5,10 +5,16 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import { LocationBackgroundContextProvider } from "./context/LocationBackgroundContext";
+import ru from "date-fns/locale/ru";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
 import "@/assets/styles/main.scss";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+
+registerLocale("ru", ru);
+setDefaultLocale("ru");
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(document.getElementById("root")!);

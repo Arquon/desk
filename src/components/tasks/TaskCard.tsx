@@ -1,24 +1,23 @@
 import React, { useRef, type FC } from "react";
 import { Link } from "react-router-dom";
 
-interface CardTaskProps {
+interface TaskCardProps {
    id: string;
-   description: string;
+   title: string;
    onDragStart: () => void;
 }
 
-export const CardTask: FC<CardTaskProps> = ({ id, description, onDragStart }) => {
+export const TaskCard: FC<TaskCardProps> = ({ id, title, onDragStart }) => {
    const cardRef = useRef<HTMLDivElement>(null);
 
    const onDragStartHandler = (event: React.DragEvent<HTMLAnchorElement>): void => {
-      console.log({ description, id });
       onDragStart();
    };
 
    return (
-      <Link to={`/task/${id}`} onDragStart={onDragStartHandler} className="tasks__item">
-         <div className="card" draggable ref={cardRef}>
-            <div className="card__content">{description}</div>
+      <Link to={id} onDragStart={onDragStartHandler} className="tasks__item">
+         <div className="task-card" draggable ref={cardRef}>
+            <div className="task-card__content">{title}</div>
          </div>
       </Link>
    );
