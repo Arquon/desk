@@ -1,14 +1,13 @@
-import React, { type FC, type PropsWithChildren } from "react";
+import { useModal } from "@/providers/ModalProvider";
+import React, { type MouseEvent, type FC, type PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 
-interface IPortalModalProps {
-   onBackgroundClick: () => void;
-}
+export const PortalModal: FC<PropsWithChildren> = ({ children }) => {
+   const { close } = useModal();
 
-export const PortalModal: FC<PropsWithChildren<IPortalModalProps>> = ({ children, onBackgroundClick }) => {
-   const backgroundClickHandler = (event: React.MouseEvent<HTMLDivElement>): void => {
-      if (event.target !== event.currentTarget) return;
-      onBackgroundClick();
+   const backgroundClickHandler = (event: MouseEvent<HTMLDivElement>): void => {
+      if (event.target !== event.currentTarget || !close) return;
+      close();
    };
 
    return (

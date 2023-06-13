@@ -7,12 +7,14 @@ import { type Nullable, type TimeStamp } from "@/types/default";
 interface IStatusesState {
    statuses: ITaskStatus[];
    isLoadingStatuses: boolean;
+   isErrorStatuses: boolean;
    lastFetchStatuses: Nullable<TimeStamp>;
 }
 
 const initialState: IStatusesState = {
    statuses: [],
    isLoadingStatuses: true,
+   isErrorStatuses: false,
    lastFetchStatuses: null,
 };
 
@@ -22,14 +24,20 @@ const statusesSlice = createSlice({
    reducers: {},
    extraReducers(builder) {
       builder
+         // fetchTaskStatuses
          .addCase(fetchTaskStatuses.pending, (state) => {
             state.isLoadingStatuses = true;
          })
          .addCase(fetchTaskStatuses.fulfilled, (state, action) => {
             state.isLoadingStatuses = false;
+            state.isErrorStatuses = false;
             state.statuses = action.payload;
             state.lastFetchStatuses = new Date().getTime();
          })
+         .addCase(fetchTaskStatuses.rejected, (state) => {
+            state.isErrorStatuses = true;
+         })
+         // createStatus
          .addCase(createStatus.pending, (state) => {
             state.isLoadingStatuses = true;
          })
@@ -37,6 +45,7 @@ const statusesSlice = createSlice({
             state.isLoadingStatuses = false;
             state.statuses.push(action.payload);
          })
+         // updateStatus
          .addCase(updateStatus.pending, (state) => {
             state.isLoadingStatuses = true;
          })
@@ -49,6 +58,7 @@ const statusesSlice = createSlice({
                return status;
             });
          })
+         // deleteStatus
          .addCase(deleteStatus.pending, (state) => {
             state.isLoadingStatuses = true;
          })

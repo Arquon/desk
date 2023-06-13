@@ -1,15 +1,17 @@
 import { localStorageService } from "@/services/localStorage.service";
 import { statusesService } from "@/services/statuses.service";
 import { type ITaskStatusFormState, type ITaskStatus } from "@/types/ITaskStatus";
-import { getUserId } from "@/utils/functions";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { delay, getUserId } from "@/utils/functions";
 import { tasksNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type RootState } from "../store";
 
 const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], string, { rejectValue: string }>(
-   "statuses/fetchTaskStatuses",
+   "statuses/fetchStatuses",
    async function (projectId, { rejectWithValue }) {
       try {
+         // await delay(5000);
          const { localId } = localStorageService.getCredentials();
          if (!localId) throw "Unauthorized";
          const data = await statusesService.fetchProjectStatuses(localId, projectId);

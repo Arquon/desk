@@ -6,7 +6,7 @@ import { useNetworkErrors } from "@/hooks/useNetworkErrors";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useAppDispatch } from "@/store/store";
 import userActions from "@/store/user/actions";
-import { useLocationBackground } from "@/context/LocationBackgroundContext";
+import { useLocationBackground } from "@/providers/LocationBackgroundProvider";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/Button";
 

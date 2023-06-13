@@ -24,10 +24,7 @@ export const tasksService = {
       return data;
    },
    updateTask: async (userId: string, task: ITask): Promise<ITask> => {
-      const { data } = await httpService.put<ITask>(`${tasksEndPoint}${userId}/${task.projectId}/${task.id}/`, {
-         ...task,
-         updatedAt: new Date().getTime(),
-      });
+      const { data } = await httpService.put<ITask>(`${tasksEndPoint}${userId}/${task.projectId}/${task.id}/`, task);
       return data;
    },
    deleteTask: async (userId: string, projectId: string, id: string) => {

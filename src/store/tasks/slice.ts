@@ -7,6 +7,7 @@ import { isTasksAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 interface TasksState {
    tasks: ITask[];
    isLoadingTasks: boolean;
+   isErrorTasks: boolean;
    lastFetchTasks: Nullable<TimeStamp>;
    isLoadingSingleTask: boolean;
 }
@@ -14,6 +15,7 @@ interface TasksState {
 const initialState: TasksState = {
    tasks: [],
    isLoadingTasks: true,
+   isErrorTasks: false,
    lastFetchTasks: null,
    isLoadingSingleTask: false,
 };
@@ -30,11 +32,13 @@ const tasksSlice = createSlice({
          })
          .addCase(fetchTasks.fulfilled, (state, action) => {
             state.isLoadingTasks = false;
+            state.isErrorTasks = false;
             state.tasks = action.payload;
             state.lastFetchTasks = new Date().getTime();
          })
          .addCase(fetchTasks.rejected, (state) => {
             state.isLoadingTasks = false;
+            state.isErrorTasks = true;
          })
          // createTask
          .addCase(createTask.pending, (state) => {

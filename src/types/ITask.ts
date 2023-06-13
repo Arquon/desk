@@ -6,11 +6,13 @@ export interface ITaskFormState {
    title: string;
    description: string;
    status: number;
+   isImportant: boolean;
 }
 
 export interface ITask extends ITaskFormState {
    createdAt: TimeStamp;
    updatedAt: TimeStamp;
+   statusUpdatedAt: TimeStamp;
    id: string;
    projectId: string;
 }

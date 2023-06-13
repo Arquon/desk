@@ -9,6 +9,7 @@ import { SelectField } from "../ui/form/SelectField";
 import { useAppSelector } from "@/store/store";
 import { Button } from "../ui/Button";
 import { TextareaField } from "../ui/form/TextareaField";
+import { CheckBoxField } from "../ui/form/CheckBoxField";
 
 interface TaskFormProps {
    initialData?: ITaskFormState;
@@ -22,6 +23,7 @@ const defaultData: ITaskFormState = {
    title: "",
    description: "",
    status: 0,
+   isImportant: false,
 };
 
 const validatorConfig: TValidator<ITaskFormState> = {
@@ -86,7 +88,6 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                maxDate={data.endAt}
                label="Начало выполнения задачи"
             />
-
             <DateField
                value={data.endAt}
                onChange={(endAt) => {
@@ -96,6 +97,7 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                label="Окончание выполнения задачи"
             />
          </div>
+         <CheckBoxField label="Срочная задача" onChange={(isImportant) => changeHandler({ isImportant })} value={data.isImportant} />
          <div className="row">
             <div className="col-md-8 offset-md-2">
                <Button type="submit" disabled={isError}>

@@ -4,7 +4,7 @@ import { App } from "@/components/app/App";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "@/store/store";
-import { LocationBackgroundContextProvider } from "./context/LocationBackgroundContext";
+import { LocationBackgroundProvider } from "./providers/LocationBackgroundProvider";
 import ru from "date-fns/locale/ru";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,9 +21,9 @@ const root = createRoot(document.getElementById("root")!);
 root.render(
    <BrowserRouter>
       <Provider store={store}>
-         <LocationBackgroundContextProvider>
+         <LocationBackgroundProvider>
             <App />
-         </LocationBackgroundContextProvider>
+         </LocationBackgroundProvider>
       </Provider>
    </BrowserRouter>
 );

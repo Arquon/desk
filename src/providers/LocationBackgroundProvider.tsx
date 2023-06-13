@@ -2,11 +2,11 @@ import { getModalRouteBackground } from "@/router/router";
 import React, { type FC, createContext, useContext, type PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
 
-type TLocationBackgroundContext = string | undefined;
+type LocationBackgroundContextType = string | undefined;
 
-const LocationBackgroundContext = createContext<TLocationBackgroundContext>(undefined);
+const LocationBackgroundContext = createContext<LocationBackgroundContextType>(undefined);
 
-export const LocationBackgroundContextProvider: FC<PropsWithChildren> = ({ children }) => {
+export const LocationBackgroundProvider: FC<PropsWithChildren> = ({ children }) => {
    const location = useLocation();
 
    let locationBackground: string | undefined = location.state?.background;
@@ -24,6 +24,6 @@ export const LocationBackgroundContextProvider: FC<PropsWithChildren> = ({ child
    return <LocationBackgroundContext.Provider value={locationBackground}>{children}</LocationBackgroundContext.Provider>;
 };
 
-export function useLocationBackground(): TLocationBackgroundContext {
+export function useLocationBackground(): LocationBackgroundContextType {
    return useContext(LocationBackgroundContext);
 }

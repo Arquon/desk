@@ -3,7 +3,7 @@ import { type TValidator } from "@/utils/validator/validator";
 import React, { type FormEvent, type FC } from "react";
 import { TextField } from "../ui/form/TextField";
 import { useNetworkErrors } from "@/hooks/useNetworkErrors";
-import { useLocationBackground } from "@/context/LocationBackgroundContext";
+import { useLocationBackground } from "@/providers/LocationBackgroundProvider";
 import { useNavigate } from "react-router-dom";
 import userActions from "@/store/user/actions";
 import { type IAuthData } from "@/types/auth/IAuthData";

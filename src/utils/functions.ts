@@ -35,3 +35,9 @@ export function toastError(error: unknown): void {
       toast.error(error, { autoClose: 3000 });
    }
 }
+
+export function getFormattedDateFromTimeStamp(timestamp: Nullable<TimeStamp>): string {
+   if (!timestamp) return "";
+   const date = new Date(timestamp);
+   return date.toLocaleDateString("ru-Ru");
+}

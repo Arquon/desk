@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
-import { defaultRoutes, modalRoutes, type IBasicRoute } from "@/router/router";
+import { defaultRoutes, modalRoutes, type TBasicRoute } from "@/router/router";
 import { PortalPage } from "../portal/PortalPage";
-import { useLocationBackground } from "@/context/LocationBackgroundContext";
+import { useLocationBackground } from "@/providers/LocationBackgroundProvider";
 import { ToastContainer } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import userActions from "@/store/user/actions";
 
-function RenderRoutes(children: IBasicRoute[]): JSX.Element[] {
+function RenderRoutes(children: TBasicRoute[]): JSX.Element[] {
    return children.map(({ name, Element, index, path, children: nestedChildren }) => {
       if (nestedChildren) {
          return (

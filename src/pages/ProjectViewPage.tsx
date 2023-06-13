@@ -1,19 +1,20 @@
 import { DeleteModal } from "@/components/modals/DeleteModal";
 import { MediumModal } from "@/components/modals/MediumModal";
-import { PortalModal } from "@/components/portal/PortalModal";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import { LightSpinner, Spinner } from "@/components/ui/Spinner";
+import { ModalProvider } from "@/providers/ModalProvider";
 import { AuthRequire } from "@/hoc/AuthRequire";
 import { useProjectView } from "@/hooks/useProjectView";
 import { EBasicProjectsRoutePaths, type IRouteParams } from "@/router/router";
 import { useAppSelector } from "@/store/store";
 import { type IProjectFormState } from "@/types/IProject";
 import { type Nullable } from "@/types/default";
-import { toastError } from "@/utils/functions";
+import { toastError, toastSuccess } from "@/utils/functions";
 import React, { useState, type FC, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { ProjectProvider, useProject } from "@/providers/ProjectProvider";
 
 interface ProjectViewPageProps {}
 
@@ -23,11 +24,11 @@ enum ETasksPageModal {
 }
 
 export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
-   const { isLoadingTasks, lastFetchTasks } = useAppSelector((state) => state.tasks);
-   const { isLoadingStatuses, lastFetchStatuses } = useAppSelector((state) => state.statuses);
-   const { isLoadingSingleProject, currentProject, lastFetchSingleProject } = useAppSelector((state) => state.projects);
+   const { isError, isLoading } = useProject();
 
-   const isLoading = isLoadingSingleProject || isLoadingTasks || isLoadingStatuses || !currentProject;
+   const { lastFetchTasks } = useAppSelector((state) => state.tasks);
+   const { lastFetchStatuses } = useAppSelector((state) => state.statuses);
+   const { lastFetchSingleProject, currentProject } = useAppSelector((state) => state.projects);
 
    const { projectId } = useParams<IRouteParams["projectTasks"]>();
    const navigate = useNavigate();
@@ -53,17 +54,19 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
       setIsLoadingEditSingleProject(true);
       try {
          await deleteProject(currentProject.id);
+         toastSuccess("Проект удален");
          navigate(EBasicProjectsRoutePaths.allProjects);
       } finally {
          setIsLoadingEditSingleProject(false);
       }
    };
+
    const onUpdateSubmit = async (projectState: IProjectFormState): Promise<void> => {
       if (!currentProject) return;
       setIsLoadingEditSingleProject(true);
       try {
          await updateProject({ ...currentProject, ...projectState });
-         closeModal();
+         toastSuccess("Проект изменен");
       } finally {
          setIsLoadingEditSingleProject(false);
       }
@@ -71,7 +74,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
 
    const firstLoadProjectInfo = async (projectId: string): Promise<void> => {
       try {
-         fetchProjectInfo(projectId, projectId !== currentProject?.id);
+         await fetchProjectInfo(projectId, projectId !== currentProject?.id);
          setFirstLoad(true);
       } catch (error) {
          toastError(error);
@@ -80,7 +83,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
 
    const loadProjectInfo = async (projectId: string): Promise<void> => {
       try {
-         fetchProjectInfo(projectId, projectId !== currentProject?.id);
+         await fetchProjectInfo(projectId, projectId !== currentProject?.id);
       } catch (error) {
          toastError(error);
       }
@@ -112,11 +115,15 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
             <div className="container-xl">
                {/* <ProjectTabs/> */}
 
-               {isLoading ? (
+               {isLoading && (
                   <div className="d-flex justify-content-center">
                      <Spinner />
                   </div>
-               ) : (
+               )}
+
+               {!isLoading && isError && <Heading>Не удалось загрузить данные проекта</Heading>}
+
+               {!isLoading && !isError && currentProject && (
                   <>
                      <div className="row mb-3">
                         <Heading className="col-6">{currentProject.name}</Heading>
@@ -131,14 +138,14 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
                            </Button>
                         </div>
                      </div>
-
-                     <Outlet />
                   </>
                )}
+
+               <Outlet />
             </div>
          </section>
          {currentModalShow !== null && currentProject && (
-            <PortalModal onBackgroundClick={closeModal}>
+            <ModalProvider close={closeModal}>
                {isLoadingEditSingleProject && <LightSpinner />}
 
                {currentModalShow === ETasksPageModal.delete && !isLoadingEditSingleProject && (
@@ -151,7 +158,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
                      <ProjectForm buttonText="Обновить проект" onSubmit={onUpdateSubmit} initialData={currentProject} />
                   </MediumModal>
                )}
-            </PortalModal>
+            </ModalProvider>
          )}
       </>
    );
@@ -160,7 +167,9 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
 export const ProjectViewPage: FC<ProjectViewPageProps> = (props) => {
    return (
       <AuthRequire>
-         <ProjectViewPageComponent {...props} />
+         <ProjectProvider>
+            <ProjectViewPageComponent {...props} />
+         </ProjectProvider>
       </AuthRequire>
    );
 };

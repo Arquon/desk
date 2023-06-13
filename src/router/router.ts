@@ -1,4 +1,4 @@
-import { TasksContent } from "@/components/projects/ProjectContainer";
+import { TasksPage } from "@/pages/TasksPage";
 import { AdminPage } from "@/pages/AdminPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { MainPage } from "@/pages/MainPage";
@@ -15,25 +15,15 @@ export enum EBasicDefaultRoutePaths {
    admin = "/admin",
 }
 
-export enum EModalDefaultRoutePaths {
-   login = "/login",
-}
-
 export enum EBasicProjectsRoutePaths {
    allProjects = "/projects",
    newProject = "/projects/new",
    viewProject = "/projects/:projectId",
-}
-
-export enum EModalProjectsRoutePaths {
    projectCreate = "/projects/new",
 }
 
 export enum EBasicTasksRoutePaths {
    projectTasks = "/projects/:projectId/tasks",
-}
-
-export enum EModalTasksRoutePaths {
    taskView = "/projects/:projectId/tasks/:taskId",
    taskCreate = "/projects/:projectId/tasks/new",
 }
@@ -44,7 +34,11 @@ export enum EBasicNotesRoutePaths {
 
 type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths | EBasicNotesRoutePaths;
 
-type ModalRoutes = EModalDefaultRoutePaths | EModalProjectsRoutePaths | EModalTasksRoutePaths;
+export enum EModalDefaultRoutePaths {
+   login = "/login",
+}
+
+type ModalRoutes = EModalDefaultRoutePaths;
 
 export interface IRouteParams {
    viewProject: {
@@ -68,14 +62,23 @@ export interface IRouteParams {
 interface IRoute {
    name: string;
    Element: FC;
-   children?: IBasicRoute[];
+   children?: TBasicRoute[];
 }
 
-export interface IBasicRoute extends IRoute {
-   index?: true;
-   baseBackground?: never;
-   path: BasicRoutes;
+interface IBasicIndexedRoute extends IRoute {
+   index: true;
+   path?: never;
 }
+
+interface IBasicNonIndexedRoute extends IRoute {
+   index?: never;
+   path: string;
+}
+
+export type TBasicRoute = (IBasicIndexedRoute | IBasicNonIndexedRoute) & {
+   baseBackground?: never;
+};
+
 interface IModalRoute extends IRoute {
    index?: never;
    baseBackground: BasicRoutes;
@@ -83,12 +86,11 @@ interface IModalRoute extends IRoute {
    children?: never;
 }
 
-const defaultRoutes: IBasicRoute[] = [
+const defaultRoutes: TBasicRoute[] = [
    {
       name: "main",
       Element: MainPage,
       index: true,
-      path: EBasicDefaultRoutePaths.landing,
    },
    {
       name: "admin",
@@ -99,6 +101,13 @@ const defaultRoutes: IBasicRoute[] = [
       name: "projects",
       Element: ProjectsPage,
       path: EBasicProjectsRoutePaths.allProjects,
+      children: [
+         {
+            name: "projectCreate",
+            Element: ProjectCreatePage,
+            path: EBasicProjectsRoutePaths.projectCreate,
+         },
+      ],
    },
    {
       name: "projectView",
@@ -107,8 +116,20 @@ const defaultRoutes: IBasicRoute[] = [
       children: [
          {
             name: "projectTasks",
-            Element: TasksContent,
+            Element: TasksPage,
             path: EBasicTasksRoutePaths.projectTasks,
+            children: [
+               {
+                  name: "taskCreate",
+                  Element: TaskCreatePage,
+                  path: EBasicTasksRoutePaths.taskCreate,
+               },
+               {
+                  name: "taskView",
+                  Element: TaskViewPage,
+                  path: EBasicTasksRoutePaths.taskView,
+               },
+            ],
          },
          {
             name: "projectNotes",
@@ -119,7 +140,7 @@ const defaultRoutes: IBasicRoute[] = [
    },
 ];
 
-const commonModalRoutes: IModalRoute[] = [
+const modalRoutes: IModalRoute[] = [
    {
       name: "login",
       Element: LoginPage,
@@ -128,38 +149,13 @@ const commonModalRoutes: IModalRoute[] = [
    },
 ];
 
-const projectsModalRoutes: IModalRoute[] = [
-   {
-      name: "projectCreate",
-      Element: ProjectCreatePage,
-      baseBackground: EBasicProjectsRoutePaths.allProjects,
-      path: EModalProjectsRoutePaths.projectCreate,
-   },
-];
-
-const tasksModalRoutes: IModalRoute[] = [
-   {
-      name: "taskCreate",
-      Element: TaskCreatePage,
-      baseBackground: EBasicTasksRoutePaths.projectTasks,
-      path: EModalTasksRoutePaths.taskCreate,
-   },
-   {
-      name: "taskView",
-      Element: TaskViewPage,
-      baseBackground: EBasicTasksRoutePaths.projectTasks,
-      path: EModalTasksRoutePaths.taskView,
-   },
-];
-
-const modalRoutes = [...commonModalRoutes, ...tasksModalRoutes, ...projectsModalRoutes];
-
 export function getModalRouteBackground(path: string): string | undefined {
    for (const modalRoute of modalRoutes) {
       const match = matchPath(modalRoute.path, path);
       if (match) {
          const generatedPath = generatePath(modalRoute.baseBackground, {
             projectId: match.params.projectId ?? null,
+            taskId: match.params.taskId ?? null,
          });
          return generatedPath;
       }

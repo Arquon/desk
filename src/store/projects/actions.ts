@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type IProjectFormState, type IProject } from "@/types/IProject";
 import { projectNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { projectsService } from "@/services/projects.service";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { delay, getUserId } from "@/utils/functions";
 import { statusesService } from "@/services/statuses.service";
 import { tasksService } from "@/services/tasks.service";
@@ -11,6 +12,9 @@ const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: str
    "projects/fetchProjects",
    async function (_, { rejectWithValue, getState }) {
       try {
+         // await delay(1000);
+         // const testError = "fetch projects test error";
+         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          const data = await projectsService.fetchProjects(userId);
          return data;
@@ -29,6 +33,7 @@ const fetchSingleProject = createAsyncThunk<IProject, string, { rejectValue: str
          const data = await projectsService.fetchSingleProject(userId, projectId);
          return data;
       } catch (error) {
+         console.log({ error });
          const parsedError = projectNetworkErrorsHandler(error);
          return rejectWithValue(parsedError);
       }

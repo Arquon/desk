@@ -7,18 +7,22 @@ import { isProjectsAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 interface IProjectsState {
    projects: IProject[];
    isLoadingProjects: boolean;
+   isErrorProjects: boolean;
    lastFetchProjects: Nullable<TimeStamp>;
    currentProject: Nullable<IProject>;
    isLoadingSingleProject: boolean;
+   isErrorSingleProject: boolean;
    lastFetchSingleProject: Nullable<TimeStamp>;
 }
 
 const initialState: IProjectsState = {
    projects: [],
    isLoadingProjects: true,
+   isErrorProjects: false,
    lastFetchProjects: null,
    currentProject: null,
    isLoadingSingleProject: true,
+   isErrorSingleProject: false,
    lastFetchSingleProject: null,
 };
 
@@ -36,8 +40,10 @@ const projectSlice = createSlice({
             state.projects = action.payload;
             state.lastFetchProjects = new Date().getTime();
             state.isLoadingProjects = false;
+            state.isErrorProjects = false;
          })
          .addCase(fetchProjects.rejected, (state) => {
+            state.isErrorProjects = true;
             state.isLoadingProjects = false;
          })
          // fetchSingleProject
@@ -48,9 +54,11 @@ const projectSlice = createSlice({
             state.currentProject = action.payload;
             state.lastFetchSingleProject = new Date().getTime();
             state.isLoadingSingleProject = false;
+            state.isErrorSingleProject = false;
          })
          .addCase(fetchSingleProject.rejected, (state) => {
-            state.isLoadingProjects = false;
+            state.isLoadingSingleProject = false;
+            state.isErrorSingleProject = true;
          })
          // createProject
          .addCase(createProject.pending, (state) => {})

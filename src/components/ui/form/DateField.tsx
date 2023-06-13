@@ -32,6 +32,7 @@ export const DateField: FC<DateFieldProps> = ({ value, label, maxDate, minDate, 
             {label}
          </label>
          <DatePicker
+            dateFormat="dd.MM.yyyy"
             onChange={onChangeHandler}
             selected={datePickerValue}
             ref={dateRef}

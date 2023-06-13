@@ -80,7 +80,7 @@ export const TasksTable: FC<TasksTableProps> = () => {
             </div>
          </div>
          {isLoadingUpdateTaskStatus && (
-            <PortalModal onBackgroundClick={() => {}}>
+            <PortalModal>
                <LightSpinner />
             </PortalModal>
          )}
