@@ -12,10 +12,14 @@
    "license": "ISC",
    "devDependencies": {
       "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+      "@types/dotenv-webpack": "^7.0.4",
+      "@types/node": "^20.3.1",
       "@types/react": "^18.0.30",
       "@types/react-datepicker": "^4.11.2",
       "@types/react-dom": "^18.0.11",
       "@types/redux-logger": "^3.0.9",
+      "@types/webpack": "^5.28.1",
+      "copy-webpack-plugin": "^11.0.0",
       "cross-env": "^7.0.3",
       "css-loader": "^6.7.3",
       "css-minimizer-webpack-plugin": "^5.0.0",
@@ -37,10 +41,12 @@
       "sass-loader": "^13.2.1",
       "terser-webpack-plugin": "^5.3.9",
       "ts-loader": "^9.4.2",
+      "ts-node": "^10.9.1",
       "typescript": "^5.0.2",
       "webpack": "^5.76.3",
       "webpack-cli": "^5.0.1",
-      "webpack-dev-server": "^4.13.1"
+      "webpack-dev-server": "^4.13.1",
+      "workbox-webpack-plugin": "^7.0.0"
    },
    "dependencies": {
       "@reduxjs/toolkit": "^1.9.5",

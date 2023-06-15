@@ -1,5 +1,6 @@
 import { LoginForm } from "@/components/login/LoginForm";
 import { RegistrationForm } from "@/components/login/RegistrationForm";
+import { WithoutAuth } from "@/hoc/WithoutAuth";
 import React, { useState, type FC } from "react";
 
 export enum ELoginPage {
@@ -9,7 +10,7 @@ export enum ELoginPage {
 
 interface LoginPageProps {}
 
-export const LoginPage: FC<LoginPageProps> = ({}) => {
+export const LoginPageComponent: FC<LoginPageProps> = ({}) => {
    const [loginPage, setLoginPage] = useState(ELoginPage.login);
 
    let Component: JSX.Element;
@@ -41,3 +42,9 @@ export const LoginPage: FC<LoginPageProps> = ({}) => {
       </div>
    );
 };
+
+export const LoginPage: FC<LoginPageProps> = (props) => (
+   <WithoutAuth>
+      <LoginPageComponent {...props} />
+   </WithoutAuth>
+);

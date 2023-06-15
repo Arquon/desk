@@ -1,11 +1,14 @@
-const path = require("path");
-const postcssPresetEnv = require("postcss-preset-env");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ReactRefreshPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const Dotenv = require("dotenv-webpack");
+import path from "path";
+import postcssPresetEnv from "postcss-preset-env";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import ReactRefreshPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import Dotenv from "dotenv-webpack";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import { InjectManifest } from "workbox-webpack-plugin";
+import { type RuleSetUseItem, type Configuration } from "webpack";
 
 const isServe = process.env.NODE_ENV === "serve";
 const isDev = process.env.NODE_ENV === "development" || isServe;
@@ -25,14 +28,29 @@ const plugins = [
    new Dotenv({
       path: dotenvPath,
    }),
+   new CopyWebpackPlugin({
+      patterns: [
+         { from: "src/templates/manifest.json", to: "[name][ext]" },
+         { from: "src/templates/robots.txt", to: "[name][ext]" },
+         { from: "src/assets/icons/*.png", to: "icons/[name][ext]" },
+         { from: "src/assets/icons/favicon.ico", to: "[name][ext]" },
+      ],
+   }),
+   new InjectManifest({
+      maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
+      swSrc: "./src/sw/serviceWorker.ts",
+      swDest: "service-worker.js",
+   }),
 ];
 
 if (isServe) {
    plugins.push(new ReactRefreshPlugin());
 }
 
-const optimization = () => {
-   const config = {
+type Optimization = Configuration["optimization"];
+
+const optimization = (): Optimization => {
+   const config: Optimization = {
       splitChunks: {
          chunks: "all",
       },
@@ -45,7 +63,7 @@ const optimization = () => {
    return config;
 };
 
-const cssLoaders = (isSass) => {
+const cssLoaders = (isSass: boolean = false): RuleSetUseItem[] => {
    const miniCssExtractPluginLoader = {
       loader: MiniCssExtractPlugin.loader,
    };
@@ -73,7 +91,11 @@ const cssLoaders = (isSass) => {
    return loaders;
 };
 
-module.exports = {
+interface IAppConfiguration extends Configuration {
+   devServer: Record<string, any>;
+}
+
+const config: IAppConfiguration = {
    target: "web",
    mode: (isProd && "production") || (isDev && "development") || "development",
    resolve: {
@@ -145,4 +167,7 @@ module.exports = {
       ],
    },
    optimization: optimization(),
+   devtool: "source-map",
 };
+
+export default config;

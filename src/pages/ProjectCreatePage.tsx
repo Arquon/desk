@@ -55,10 +55,14 @@ export const ProjectCreatePageComponent: FC<ProjectCreatePageProps> = () => {
 
    return (
       <ModalProvider close={onBackgroundClickHandler}>
-         {isLoadingCreateProject && <LightSpinner />}
-         <MediumModal hidden={isLoadingCreateProject}>
+         <MediumModal>
             <Heading>Создание проекта</Heading>
             <ProjectForm buttonText="Создать проект" onSubmit={onSubmitHandler} />
+            {isLoadingCreateProject && (
+               <ModalProvider>
+                  <LightSpinner />
+               </ModalProvider>
+            )}
          </MediumModal>
       </ModalProvider>
    );

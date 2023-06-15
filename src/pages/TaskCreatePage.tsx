@@ -64,11 +64,15 @@ export const TaskCreateComponent: FC<TaskCreatePageProps> = () => {
 
    return (
       <ModalProvider close={onBackgroundClickHandler}>
-         {isLoadingCreateTask && <LightSpinner />}
-         <MediumModal hidden={isLoadingCreateTask}>
+         <MediumModal>
             <Heading>Создание задачи</Heading>
             <TaskForm onSubmit={onSubmitHandler} buttonText="Добавить задачу" />
          </MediumModal>
+         {isLoadingCreateTask && (
+            <ModalProvider>
+               <LightSpinner />
+            </ModalProvider>
+         )}
       </ModalProvider>
    );
 };

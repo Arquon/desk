@@ -8,17 +8,23 @@ interface TaskCardProps extends ITask {
 }
 
 export const TaskCard: FC<TaskCardProps> = ({ id, title, isImportant, startAt, endAt, onDragStart }) => {
-   const cardRef = useRef<HTMLDivElement>(null);
+   const cardRef = useRef<HTMLAnchorElement>(null);
 
    const onDragStartHandler = (event: React.DragEvent<HTMLAnchorElement>): void => {
       onDragStart();
    };
 
+   const onDragEndHandler = (event: React.DragEvent<HTMLAnchorElement>): void => {
+      // if (cardRef.current) {
+      //    cardRef.current.classList.toggle("test");
+      // }
+   };
+
    const isDateBlockShow = !!startAt || !!endAt;
 
    return (
-      <Link to={id} onDragStart={onDragStartHandler} className="tasks__item">
-         <div className="task-card" draggable ref={cardRef}>
+      <Link to={id} onDragStart={onDragStartHandler} onDragEnd={onDragEndHandler} className="tasks__item" draggable ref={cardRef}>
+         <div className="task-card">
             <div className="d-flex justify-content-between task-card__content">
                <div className="me-3 d-flex align-items-center">{title}</div>
                {isImportant && <div className="rounded text-danger fs-4">!</div>}

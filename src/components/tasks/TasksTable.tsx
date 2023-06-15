@@ -29,7 +29,15 @@ export const TasksTable: FC<TasksTableProps> = () => {
    }
 
    for (const tasks of Object.values(filteredTasks)) {
-      tasks.sort((a, b) => a.updatedAt - b.updatedAt);
+      tasks.sort((a, b) => {
+         if (!a.statusUpdatedAt) {
+            return -1;
+         } else if (!b.statusUpdatedAt) {
+            return 1;
+         }
+
+         return a.statusUpdatedAt - b.statusUpdatedAt;
+      });
    }
 
    const [currentTask, setCurrentTask] = useState<Nullable<ITask>>(null);
@@ -43,7 +51,7 @@ export const TasksTable: FC<TasksTableProps> = () => {
       if (!currentTask) return;
       setIsLoadingUpdateTaskStatus(true);
       try {
-         unwrapResult(await dispatch(tasksActions.updateTask({ ...currentTask, status: +newStatus })));
+         unwrapResult(await dispatch(tasksActions.updateTask({ currentTask, updatedTaskFields: { status: +newStatus } })));
          setCurrentTask(null);
       } catch (error) {
          toastError(error);

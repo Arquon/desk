@@ -146,17 +146,29 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
          </section>
          {currentModalShow !== null && currentProject && (
             <ModalProvider close={closeModal}>
-               {isLoadingEditSingleProject && <LightSpinner />}
-
-               {currentModalShow === ETasksPageModal.delete && !isLoadingEditSingleProject && (
-                  <DeleteModal text="Вы уверены что хотите удалить проект?" onDelete={onDeleteHandler} />
+               {currentModalShow === ETasksPageModal.delete && (
+                  <>
+                     <DeleteModal text="Вы уверены что хотите удалить проект?" onDelete={onDeleteHandler} />
+                     {isLoadingEditSingleProject && (
+                        <ModalProvider>
+                           <LightSpinner />
+                        </ModalProvider>
+                     )}
+                  </>
                )}
 
                {currentModalShow === ETasksPageModal.edit && (
-                  <MediumModal hidden={isLoadingEditSingleProject}>
-                     <Heading>Обновление проекта</Heading>
-                     <ProjectForm buttonText="Обновить проект" onSubmit={onUpdateSubmit} initialData={currentProject} />
-                  </MediumModal>
+                  <>
+                     <MediumModal>
+                        <Heading>Обновление проекта</Heading>
+                        <ProjectForm buttonText="Обновить проект" onSubmit={onUpdateSubmit} initialData={currentProject} />
+                     </MediumModal>
+                     {isLoadingEditSingleProject && (
+                        <ModalProvider>
+                           <LightSpinner />
+                        </ModalProvider>
+                     )}
+                  </>
                )}
             </ModalProvider>
          )}

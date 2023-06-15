@@ -10,7 +10,7 @@ import { EBasicTasksRoutePaths, type IRouteParams } from "@/router/router";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import tasksActions from "@/store/tasks/actions";
 import { type ITask, type ITaskFormState } from "@/types/ITask";
-import { toastError, toastSuccess } from "@/utils/functions";
+import { getFormattedDateFromTimeStamp, toastError, toastSuccess } from "@/utils/functions";
 import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useState, type FC, useEffect } from "react";
 import { Navigate, generatePath, useNavigate, useParams } from "react-router-dom";
@@ -105,10 +105,17 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
 
          {currentTask && (
             <MediumModal hidden={isLoadingEditTask}>
-               <div className="d-flex flex-wrap justify-content-between">
-                  <Heading>Просмотр задачи</Heading>
+               <div className="d-flex flex-wrap justify-content-between mb-1">
+                  <div className="d-flex align-items-end flex-wrap">
+                     <Heading className="mb-1 me-3">Просмотр задачи</Heading>
+                     <span className="fs-6 me-3 d-inline-block mb-1 ">
+                        последнее изменение статуса {getFormattedDateFromTimeStamp(currentTask.statusUpdatedAt)}
+                     </span>
+                  </div>
                   <div>
-                     <AlternateButton onClick={openEditModal}>Удалить задачу</AlternateButton>
+                     <AlternateButton onClick={openEditModal} className="mb-1">
+                        Удалить задачу
+                     </AlternateButton>
                   </div>
                </div>
                <TaskForm onSubmit={onSubmitHandler} initialData={currentTask} buttonText="Обновить задачу" />
