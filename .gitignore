@@ -4,3 +4,5 @@ config/config.json
 .env
 .env.*
 todo
+.firebaserc
+.firebase
