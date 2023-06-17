@@ -13,12 +13,10 @@ export const LocationBackgroundProvider: FC<PropsWithChildren> = ({ children }) 
 
    if (location.state?.background) {
       locationBackground = location.state?.background;
-      console.log("Location from state", locationBackground);
    } else {
       const modalRouteBackground = getModalRouteBackground(location.pathname);
       if (modalRouteBackground) {
          locationBackground = modalRouteBackground;
-         console.log("Location from baseBackground", locationBackground);
       }
    }
    return <LocationBackgroundContext.Provider value={locationBackground}>{children}</LocationBackgroundContext.Provider>;

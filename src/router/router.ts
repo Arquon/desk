@@ -1,5 +1,5 @@
 import { TasksPage } from "@/pages/TasksPage";
-import { AdminPage } from "@/pages/AdminPage";
+// import { AdminPage } from "@/pages/AdminPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { MainPage } from "@/pages/MainPage";
 import { ProjectCreatePage } from "@/pages/ProjectCreatePage";
@@ -9,39 +9,49 @@ import { TaskViewPage } from "@/pages/TaskViewPage";
 import { TaskCreatePage } from "@/pages/TaskCreatePage";
 import { type FC } from "react";
 import { generatePath, matchPath } from "react-router-dom";
+import { StatusesPage } from "@/pages/StatusesPage";
+import { HistoryPage } from "@/pages/HistoryPage";
 
-export enum EBasicDefaultRoutePaths {
+export enum EDefaultBasicRoutePaths {
    landing = "/",
-   admin = "/admin",
+   // admin = "/admin",
 }
 
-export enum EBasicProjectsRoutePaths {
+export enum EProjectsBasicRoutePaths {
    allProjects = "/projects",
-   newProject = "/projects/new",
-   viewProject = "/projects/:projectId",
+   projectView = "/projects/:projectId",
    projectCreate = "/projects/new",
 }
 
-export enum EBasicTasksRoutePaths {
+export enum ETasksBasicRoutePaths {
    projectTasks = "/projects/:projectId/tasks",
    taskView = "/projects/:projectId/tasks/:taskId",
    taskCreate = "/projects/:projectId/tasks/new",
 }
 
-export enum EBasicNotesRoutePaths {
+export enum EHistoryBasicRoutePaths {
+   projectHistory = "/projects/:projectId/history",
+   taskView = "/projects/:projectId/history/:taskId",
+}
+
+export enum EStatusesBasicRoutePaths {
+   projectStatuses = "/projects/:projectId/statuses",
+}
+
+export enum ENotesBasicRoutePaths {
    projectNotes = "/projects/:projectId/notes",
 }
 
-type BasicRoutes = EBasicDefaultRoutePaths | EBasicProjectsRoutePaths | EBasicTasksRoutePaths | EBasicNotesRoutePaths;
+type BasicRoutes = EDefaultBasicRoutePaths | EProjectsBasicRoutePaths | ETasksBasicRoutePaths | EStatusesBasicRoutePaths | ENotesBasicRoutePaths;
 
-export enum EModalDefaultRoutePaths {
+export enum EDefaultModalRoutePaths {
    login = "/login",
 }
 
-type ModalRoutes = EModalDefaultRoutePaths;
+type ModalRoutes = EDefaultModalRoutePaths;
 
 export interface IRouteParams {
-   viewProject: {
+   projectView: {
       projectId: string;
    };
    projectTasks: {
@@ -62,7 +72,6 @@ export interface IRouteParams {
 interface IRoute {
    name: string;
    Element: FC;
-   children?: TBasicRoute[];
 }
 
 interface IBasicIndexedRoute extends IRoute {
@@ -77,6 +86,7 @@ interface IBasicNonIndexedRoute extends IRoute {
 
 export type TBasicRoute = (IBasicIndexedRoute | IBasicNonIndexedRoute) & {
    baseBackground?: never;
+   children?: TBasicRoute[];
 };
 
 interface IModalRoute extends IRoute {
@@ -92,49 +102,66 @@ const defaultRoutes: TBasicRoute[] = [
       Element: MainPage,
       index: true,
    },
-   {
-      name: "admin",
-      Element: AdminPage,
-      path: EBasicDefaultRoutePaths.admin,
-   },
+   // {
+   //    name: "admin",
+   //    Element: AdminPage,
+   //    path: EBasicDefaultRoutePaths.admin,
+   // },
    {
       name: "projects",
       Element: ProjectsPage,
-      path: EBasicProjectsRoutePaths.allProjects,
+      path: EProjectsBasicRoutePaths.allProjects,
       children: [
          {
             name: "projectCreate",
             Element: ProjectCreatePage,
-            path: EBasicProjectsRoutePaths.projectCreate,
+            path: EProjectsBasicRoutePaths.projectCreate,
          },
       ],
    },
    {
       name: "projectView",
       Element: ProjectViewPage,
-      path: EBasicProjectsRoutePaths.viewProject,
+      path: EProjectsBasicRoutePaths.projectView,
       children: [
          {
             name: "projectTasks",
             Element: TasksPage,
-            path: EBasicTasksRoutePaths.projectTasks,
+            path: ETasksBasicRoutePaths.projectTasks,
             children: [
                {
                   name: "taskCreate",
                   Element: TaskCreatePage,
-                  path: EBasicTasksRoutePaths.taskCreate,
+                  path: ETasksBasicRoutePaths.taskCreate,
                },
                {
                   name: "taskView",
                   Element: TaskViewPage,
-                  path: EBasicTasksRoutePaths.taskView,
+                  path: ETasksBasicRoutePaths.taskView,
                },
             ],
          },
          {
+            name: "projectHistory",
+            Element: HistoryPage,
+            path: EHistoryBasicRoutePaths.projectHistory,
+            children: [
+               {
+                  name: "historyTaskView",
+                  Element: TaskViewPage,
+                  path: EHistoryBasicRoutePaths.taskView,
+               },
+            ],
+         },
+         {
+            name: "projectStatuses",
+            Element: StatusesPage,
+            path: EStatusesBasicRoutePaths.projectStatuses,
+         },
+         {
             name: "projectNotes",
             Element: () => null,
-            path: EBasicNotesRoutePaths.projectNotes,
+            path: ENotesBasicRoutePaths.projectNotes,
          },
       ],
    },
@@ -144,8 +171,8 @@ const modalRoutes: IModalRoute[] = [
    {
       name: "login",
       Element: LoginPage,
-      baseBackground: EBasicDefaultRoutePaths.landing,
-      path: EModalDefaultRoutePaths.login,
+      baseBackground: EDefaultBasicRoutePaths.landing,
+      path: EDefaultModalRoutePaths.login,
    },
 ];
 

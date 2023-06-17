@@ -2,44 +2,63 @@ import { type ITask } from "@/types/ITask";
 import React, { useRef, type FC, useState } from "react";
 import { TaskCard } from "./TaskCard";
 
-interface ColumnTaskProps {
-   onDragStart: (task: ITask) => void;
-   onDrop: () => void;
+interface ColumnTasksAlwaysProps {
    tasks: ITask[];
-   currentTaskStatus: number | undefined;
-   columnStatus: number;
 }
 
-export const ColumnTask: FC<ColumnTaskProps> = ({ tasks, onDragStart, onDrop, currentTaskStatus, columnStatus }) => {
+interface ColumnTaskPropsNonDraggable extends ColumnTasksAlwaysProps {
+   onDragStart?: never;
+   onDrop?: never;
+   currentTaskStatusId?: never;
+   columnStatusId?: never;
+   draggable?: never;
+}
+interface ColumnTaskPropsDraggable extends ColumnTasksAlwaysProps {
+   onDragStart: (task: ITask) => void;
+   onDrop: () => Promise<void>;
+   currentTaskStatusId: string | undefined;
+   columnStatusId: string;
+   draggable: true;
+}
+
+type ColumnTaskProps = ColumnTaskPropsNonDraggable | ColumnTaskPropsDraggable;
+
+export const ColumnTask: FC<ColumnTaskProps> = ({ tasks, onDragStart, onDrop, currentTaskStatusId, columnStatusId, draggable }) => {
    const columnRef = useRef<HTMLDivElement>(null);
    const [isFantomDiv, setIsFantomDiv] = useState(false);
 
    const onDragOverHandler = (event: React.DragEvent<HTMLDivElement>): void => {
+      if (!columnRef.current || !draggable) return;
       event.preventDefault();
-      if (!columnRef.current) return;
-      columnRef.current.classList.add("tasks__column_over");
-      if (currentTaskStatus !== columnStatus) setIsFantomDiv(true);
+      columnRef.current.classList.add("project__column_over");
+      if (currentTaskStatusId !== columnStatusId) setIsFantomDiv(true);
    };
 
    const onDragEndHandler = (event: React.DragEvent<HTMLDivElement>): void => {
-      if (!columnRef.current) return;
-      columnRef.current.classList.remove("tasks__column_over");
+      if (!columnRef.current || !draggable) return;
+      event.preventDefault();
+      columnRef.current.classList.remove("project__column_over");
       setIsFantomDiv(false);
    };
 
    const onDragLeaveHandler = onDragEndHandler;
 
-   const onDropHandler = (event: React.DragEvent<HTMLDivElement>): void => {
+   const onDropHandler = async (event: React.DragEvent<HTMLDivElement>): Promise<void> => {
+      if (!columnRef.current || !draggable) return;
       event.preventDefault();
-      if (!columnRef.current) return;
-      columnRef.current.classList.remove("tasks__column_over");
-      if (currentTaskStatus !== columnStatus) onDrop();
+      columnRef.current.classList.remove("project__column_over");
+      if (currentTaskStatusId !== columnStatusId) await onDrop();
       setIsFantomDiv(false);
+   };
+
+   const onDragStartHandler = (task: ITask): void => {
+      if (!draggable) return;
+      onDragStart(task);
    };
 
    return (
       <div
-         className="tasks__column"
+         className="project__column"
          onDragEnd={onDragEndHandler}
          onDragLeave={onDragLeaveHandler}
          onDragOver={onDragOverHandler}
@@ -47,9 +66,9 @@ export const ColumnTask: FC<ColumnTaskProps> = ({ tasks, onDragStart, onDrop, cu
          ref={columnRef}
       >
          {tasks.map((task) => (
-            <TaskCard key={task.id} {...task} onDragStart={() => onDragStart(task)} />
+            <TaskCard key={task.id} {...task} onDragStart={() => onDragStartHandler(task)} draggable={draggable} />
          ))}
-         {isFantomDiv && <div className="tasks__item tasks__item_fantom"></div>}
+         {isFantomDiv && <div className="project__item project__item_fantom"></div>}
       </div>
    );
 };

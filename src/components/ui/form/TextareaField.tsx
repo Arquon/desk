@@ -1,10 +1,12 @@
 import { type ICommonTextInputProps } from "@/types/ICommonInputProps";
 import { getClassNameFromArray } from "@/utils/functions";
-import React, { useRef, type FC, type ChangeEvent } from "react";
+import React, { useRef, type FC, type ChangeEvent, type ComponentProps } from "react";
 
-interface TextAreaFieldProps extends ICommonTextInputProps {}
+interface TextAreaFieldOwnProps extends ICommonTextInputProps {}
 
-export const TextareaField: FC<TextAreaFieldProps> = ({ value, label, error, onChange }) => {
+type TextAreaFieldProps = TextAreaFieldOwnProps & Omit<ComponentProps<"textarea">, keyof TextAreaFieldOwnProps>;
+
+export const TextareaField: FC<TextAreaFieldProps> = ({ value, label, error, onChange, ...otherProps }) => {
    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
    const onClickLabelHandler = (): void => {
@@ -33,6 +35,7 @@ export const TextareaField: FC<TextAreaFieldProps> = ({ value, label, error, onC
                onChange={onChangeHandler}
                value={value}
                ref={textareaRef}
+               {...otherProps}
             ></textarea>
             {error && <div className="invalid-feedback">{error}</div>}
          </div>

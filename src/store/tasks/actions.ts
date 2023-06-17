@@ -50,7 +50,7 @@ const updateTask = createAsyncThunk<
       const userId = getUserId(getState);
       const now = new Date().getTime();
       const updatedTask: ITask = { ...currentTask, ...updatedTaskFields, updatedAt: now };
-      if (currentTask.status !== updatedTaskFields.status) {
+      if (currentTask.statusId !== updatedTaskFields.statusId) {
          updatedTask.statusUpdatedAt = now;
       }
       const data = await tasksService.updateTask(userId, updatedTask);

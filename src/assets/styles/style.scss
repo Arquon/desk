@@ -1,5 +1,5 @@
 :root {
-   --toastify-color-success: #4c566a;
+   --toastify-color-success: #5e81ac;
    --toastify-color-error: #bf616a;
 }
 
@@ -65,6 +65,7 @@ main {
    &_alternate {
       color: $alternate-color;
       background-color: $base-color;
+      white-space: nowrap;
 
       &:hover {
          background-color: $my-card-color;
@@ -72,15 +73,23 @@ main {
    }
 }
 
-.tasks {
-   &__table {
-      padding: 20px;
+.project {
+   &__wrap {
       background-color: $alternate-color;
       border-radius: 20px;
+
+      &_statuses {
+         background-color: $column-light-color;
+      }
 
       p {
          color: $alternate-text-color;
       }
+   }
+
+   &__table {
+      padding: 20px;
+      overflow: auto;
    }
 
    &__row {
@@ -103,9 +112,8 @@ main {
       border-radius: 10px;
       transition: background-color 0.4s ease;
       min-height: 320px;
-      flex: 1 0 0%;
+      flex: 1 0 250px;
       margin-right: 10px;
-      min-width: 250px;
 
       &:last-child {
          margin-right: 0;
@@ -151,13 +159,10 @@ main {
    background-color: $my-card-color;
    border: none;
    border-radius: 5px;
+   cursor: pointer;
 
    &:hover {
-      .task-card__content {
-         & > div:first-child {
-            text-decoration: underline;
-         }
-      }
+      background-color: $base-color;
    }
 
    &__content {
@@ -182,4 +187,30 @@ input {
 
 .react-datepicker-wrapper {
    display: block;
+}
+
+.status-card {
+   flex: 1 0 250px;
+   cursor: grab;
+   margin-bottom: 0;
+   padding: 15px;
+   background-color: $column-dark-color;
+
+   &_plus {
+      flex: 0 0 auto;
+      font-size: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+
+      svg {
+         transition: 0.3s ease;
+         cursor: pointer;
+         color: $text-color;
+         &:hover {
+            color: $base-color;
+         }
+      }
+   }
 }

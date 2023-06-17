@@ -10,7 +10,7 @@ const defaultElement = "button";
 
 export const Button = <E extends ElementType = typeof defaultElement>({ children, as, ...otherProps }: ButtonProps<E>): JSX.Element => {
    const TagName = as ?? defaultElement;
-   const arrayedClassName = ["btn w-100 mx-auto"];
+   const arrayedClassName = ["btn w-100"];
    const { className } = otherProps;
    if (className) {
       arrayedClassName.push(className);

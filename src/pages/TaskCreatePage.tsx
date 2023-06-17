@@ -4,7 +4,7 @@ import { Heading } from "@/components/ui/Heading";
 import { LightSpinner } from "@/components/ui/Spinner";
 import { ModalProvider } from "@/providers/ModalProvider";
 import { AuthRequire } from "@/hoc/AuthRequire";
-import { EBasicTasksRoutePaths, type IRouteParams } from "@/router/router";
+import { EProjectsBasicRoutePaths, ETasksBasicRoutePaths, type IRouteParams } from "@/router/router";
 import { useAppDispatch } from "@/store/store";
 import tasksActions from "@/store/tasks/actions";
 import { type ITaskFormState } from "@/types/ITask";
@@ -23,15 +23,16 @@ export const TaskCreateComponent: FC<TaskCreatePageProps> = () => {
    const navigate = useNavigate();
    const { projectId } = useParams<IRouteParams["taskCreate"]>();
 
+   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
+
    const [isLoadingCreateTask, setIsLoadingCreateTask] = useState(false);
 
    const onSubmitHandler = async (data: ITaskFormState): Promise<void> => {
-      if (!projectId) return;
       setIsLoadingCreateTask(true);
       try {
          unwrapResult(await dispatch(tasksActions.createTask({ taskFormState: data, projectId })));
-         const path = generatePath(EBasicTasksRoutePaths.projectTasks, {
-            projectId: projectId ?? null,
+         const path = generatePath(ETasksBasicRoutePaths.projectTasks, {
+            projectId,
          });
          toastSuccess("Задача добавлена");
          navigate(path);
@@ -41,15 +42,15 @@ export const TaskCreateComponent: FC<TaskCreatePageProps> = () => {
    };
 
    const onBackgroundClickHandler = (): void => {
-      const path = generatePath(EBasicTasksRoutePaths.projectTasks, {
-         projectId: projectId ?? null,
+      const path = generatePath(ETasksBasicRoutePaths.projectTasks, {
+         projectId,
       });
       navigate(path);
    };
 
    if (isError) {
-      const path = generatePath(EBasicTasksRoutePaths.projectTasks, {
-         projectId: projectId ?? null,
+      const path = generatePath(ETasksBasicRoutePaths.projectTasks, {
+         projectId,
       });
       return <Navigate to={path} />;
    }

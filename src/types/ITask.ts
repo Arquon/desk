@@ -5,8 +5,9 @@ export interface ITaskFormState {
    endAt: Nullable<TimeStamp>;
    title: string;
    description: string;
-   status: number;
+   statusId: string;
    isImportant: boolean;
+   inHistory?: boolean;
 }
 
 export interface ITask extends ITaskFormState {
@@ -18,4 +19,8 @@ export interface ITask extends ITaskFormState {
 }
 
 export type TTaskWithoutId = Omit<ITask, "id">;
-export type TFilteredTasks = Record<string, ITask[]>;
+export interface TFilteredTasks {
+   order: number;
+   id: string;
+   tasks: ITask[];
+}

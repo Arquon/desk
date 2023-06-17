@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 
 interface TaskCardProps extends ITask {
    onDragStart: () => void;
+   draggable?: true;
 }
 
-export const TaskCard: FC<TaskCardProps> = ({ id, title, isImportant, startAt, endAt, onDragStart }) => {
-   const cardRef = useRef<HTMLAnchorElement>(null);
+export const TaskCard: FC<TaskCardProps> = ({ id, title, isImportant, startAt, endAt, draggable, onDragStart }) => {
+   const cardRef = useRef<HTMLDivElement>(null);
 
    const onDragStartHandler = (event: React.DragEvent<HTMLAnchorElement>): void => {
       onDragStart();
@@ -23,8 +24,8 @@ export const TaskCard: FC<TaskCardProps> = ({ id, title, isImportant, startAt, e
    const isDateBlockShow = !!startAt || !!endAt;
 
    return (
-      <Link to={id} onDragStart={onDragStartHandler} onDragEnd={onDragEndHandler} className="tasks__item" draggable ref={cardRef}>
-         <div className="task-card">
+      <Link to={id} className="project__item task-card" draggable={draggable} onDragStart={onDragStartHandler} onDragEnd={onDragEndHandler}>
+         <div ref={cardRef}>
             <div className="d-flex justify-content-between task-card__content">
                <div className="me-3 d-flex align-items-center">{title}</div>
                {isImportant && <div className="rounded text-danger fs-4">!</div>}

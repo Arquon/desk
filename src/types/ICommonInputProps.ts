@@ -1,5 +1,5 @@
 export interface ICommonInputProps {
-   label: string;
+   label?: string;
    error?: string;
 }
 

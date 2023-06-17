@@ -1,16 +1,19 @@
+import React, { type SyntheticEvent, type FC, useRef } from "react";
+import DatePicker, { type ReactDatePickerProps, type ReactDatePicker } from "react-datepicker";
+
 import { type ICommonInputProps } from "@/types/ICommonInputProps";
 import { type Nullable, type TimeStamp } from "@/types/default";
-import React, { type SyntheticEvent, type FC, useRef } from "react";
-import DatePicker, { type ReactDatePicker } from "react-datepicker";
 
-interface DateFieldProps extends ICommonInputProps {
+interface DateFieldOwnProps extends ICommonInputProps {
    value: Nullable<TimeStamp>;
    onChange: (value: Nullable<TimeStamp>) => void;
    maxDate?: Nullable<TimeStamp>;
    minDate?: Nullable<TimeStamp>;
 }
 
-export const DateField: FC<DateFieldProps> = ({ value, label, maxDate, minDate, onChange }) => {
+type DateFieldProps = DateFieldOwnProps & Omit<ReactDatePickerProps, keyof DateFieldOwnProps>;
+
+export const DateField: FC<DateFieldProps> = ({ value, label, maxDate, minDate, onChange, ...otherProps }) => {
    const dateRef = useRef<ReactDatePicker>(null);
 
    const onClickLabelHandler = (): void => {
@@ -40,7 +43,8 @@ export const DateField: FC<DateFieldProps> = ({ value, label, maxDate, minDate, 
             locale="ru"
             maxDate={datePickerMaxDate}
             minDate={datePickerMinDate}
-            placeholderText="Выберите дату"
+            placeholderText={otherProps.placeholderText ?? "Выберите дату"}
+            {...otherProps}
          />
       </div>
    );

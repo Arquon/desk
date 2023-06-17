@@ -1,12 +1,14 @@
 import { type ICommonTextInputProps } from "@/types/ICommonInputProps";
 import { getClassNameFromArray } from "@/utils/functions";
-import React, { useRef, type FC, type ChangeEvent } from "react";
+import React, { useRef, type FC, type ChangeEvent, type ComponentProps } from "react";
 
-interface TextFieldProps extends ICommonTextInputProps {
+interface TextFieldOwnProps extends ICommonTextInputProps {
    type?: "text" | "password";
 }
 
-export const TextField: FC<TextFieldProps> = ({ value, type = "text", label, error, onChange }) => {
+type TextFieldProps = TextFieldOwnProps & Omit<ComponentProps<"input">, keyof TextFieldOwnProps>;
+
+export const TextField: FC<TextFieldProps> = ({ value, type = "text", label, error, onChange, ...otherProps }) => {
    const inputRef = useRef<HTMLInputElement>(null);
 
    const onClickLabelHandler = (): void => {
@@ -19,6 +21,7 @@ export const TextField: FC<TextFieldProps> = ({ value, type = "text", label, err
    };
 
    const inputClassName = ["form-control"];
+
    if (error) {
       inputClassName.push("is-invalid");
    }
@@ -30,7 +33,15 @@ export const TextField: FC<TextFieldProps> = ({ value, type = "text", label, err
          </label>
 
          <div className="input-group">
-            <input type={type} className={getClassNameFromArray(inputClassName)} onChange={onChangeHandler} value={value} ref={inputRef} />
+            <input
+               type={type}
+               className={getClassNameFromArray(inputClassName)}
+               onChange={onChangeHandler}
+               value={value}
+               ref={inputRef}
+               {...otherProps}
+            />
+
             {error && <div className="invalid-feedback">{error}</div>}
          </div>
       </div>

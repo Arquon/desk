@@ -19,7 +19,6 @@ const login = createAsyncThunk<IUserData, IAuthData, { rejectValue: string | Val
             const userData = await authService.getUserData(data.localId);
             return userData;
          } catch (error) {
-            console.log(error);
             const parsedError = userNetworkErrorsHandler(error);
             return rejectWithValue(parsedError);
          }

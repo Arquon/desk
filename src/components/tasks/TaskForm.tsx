@@ -2,7 +2,7 @@ import { useForm } from "@/hooks/useForm";
 import { useNetworkErrors } from "@/hooks/useNetworkErrors";
 import { type ITaskFormState } from "@/types/ITask";
 import { type TValidator } from "@/utils/validator/validator";
-import React, { type FormEvent, type FC } from "react";
+import React, { type FormEvent, type FC, type PropsWithChildren } from "react";
 import { TextField } from "../ui/form/TextField";
 import { DateField } from "../ui/form/DateField";
 import { SelectField } from "../ui/form/SelectField";
@@ -10,19 +10,14 @@ import { useAppSelector } from "@/store/store";
 import { Button } from "../ui/Button";
 import { TextareaField } from "../ui/form/TextareaField";
 import { CheckBoxField } from "../ui/form/CheckBoxField";
-
-interface TaskFormProps {
-   initialData?: ITaskFormState;
-   onSubmit: (data: ITaskFormState) => Promise<void>;
-   buttonText: string;
-}
+import { type ITaskStatus } from "@/types/ITaskStatus";
 
 const defaultData: ITaskFormState = {
    startAt: null,
    endAt: null,
    title: "",
    description: "",
-   status: 0,
+   statusId: "",
    isImportant: false,
 };
 
@@ -34,13 +29,34 @@ const validatorConfig: TValidator<ITaskFormState> = {
    },
 };
 
-export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit }) => {
+function getDefaultStatusId(statuses: ITaskStatus[]): string {
+   const { id } = statuses.reduce(
+      (acc, status) => {
+         if (status.order < acc.order) {
+            return status;
+         }
+         return acc;
+      },
+      { order: Infinity, id: "" }
+   );
+
+   return id;
+}
+
+interface TaskFormProps {
+   initialData?: ITaskFormState;
+   onSubmit: (data: ITaskFormState) => Promise<void>;
+   buttonText: string;
+   readOnly?: boolean;
+}
+
+export const TaskForm: FC<PropsWithChildren<TaskFormProps>> = ({ initialData, buttonText, readOnly, onSubmit }) => {
+   const { statuses } = useAppSelector((state) => state.statuses);
    const { data, changeHandler, errors } = useForm({
-      initialData: initialData ?? defaultData,
+      initialData: initialData ?? { ...defaultData, statusId: getDefaultStatusId(statuses) },
       validatorConfig,
    });
    const { networkErrors, networkErrorHandler } = useNetworkErrors(data);
-   const { statuses } = useAppSelector((state) => state.statuses);
 
    const onSubmitHandler = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
       event.preventDefault();
@@ -62,6 +78,7 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                changeHandler({ title });
             }}
             error={errors.title ?? networkErrors.title}
+            readOnly={readOnly}
          />
          <TextareaField
             value={data.description}
@@ -70,14 +87,16 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                changeHandler({ description });
             }}
             error={errors.description ?? networkErrors.description}
+            readOnly={readOnly}
          />
          <SelectField
-            value={data.status}
+            value={data.statusId}
             label="Статус"
-            collection={statuses.map((status) => ({ name: status.title, value: status.order }))}
-            onChange={(stringStatus) => {
-               changeHandler({ status: +stringStatus });
+            collection={statuses.map((status) => ({ name: status.title, value: status.id }))}
+            onChange={(statusId) => {
+               changeHandler({ statusId });
             }}
+            disabled={readOnly}
          />
          <div className="d-flex flex-wrap">
             <DateField
@@ -87,6 +106,7 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                }}
                maxDate={data.endAt}
                label="Начало выполнения задачи"
+               readOnly={readOnly}
             />
             <DateField
                value={data.endAt}
@@ -95,9 +115,17 @@ export const TaskForm: FC<TaskFormProps> = ({ initialData, buttonText, onSubmit 
                }}
                minDate={data.startAt}
                label="Окончание выполнения задачи"
+               readOnly={readOnly}
             />
          </div>
-         <CheckBoxField label="Срочная задача" onChange={(isImportant) => changeHandler({ isImportant })} value={data.isImportant} />
+         <CheckBoxField
+            label="Срочная задача"
+            onChange={(isImportant) => changeHandler({ isImportant })}
+            value={data.isImportant}
+            // disabled={readOnly}
+            readOnly={readOnly}
+         />
+
          <div className="row">
             <div className="col-md-8 offset-md-2">
                <Button type="submit" disabled={isError}>

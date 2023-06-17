@@ -17,7 +17,6 @@ interface NetworkErrors {
 }
 
 function networkErrorsHandler(error: unknown, defaultErrorMessages: NetworkErrors, customErrorMessages?: DeepPartial<NetworkErrors>): string {
-   // console.log(error);
    if (axios.isAxiosError(error)) {
       if (!error.response) return "Axios Error";
       const { statusText, status: code } = error.response;
@@ -37,6 +36,7 @@ function networkErrorsHandler(error: unknown, defaultErrorMessages: NetworkError
                return customErrorMessages?._404?.default ?? defaultErrorMessages._404.default;
          }
       }
+      console.error(error);
       return customErrorMessages?.unhandled ?? defaultErrorMessages.unhandled;
    }
 
@@ -44,6 +44,7 @@ function networkErrorsHandler(error: unknown, defaultErrorMessages: NetworkError
       return error;
    }
 
+   console.error(error);
    return "Unhandled Error";
 }
 
@@ -92,12 +93,10 @@ export function signInNetworkErrorsHandler(error: unknown): ValidationErrors<IAu
       }
       return "Unhandled Axios Error";
    }
-
    return "Unhandled Error";
 }
 
 export function signUpNetworkErrorsHandler(error: unknown): ValidationErrors<IAuthData> | string {
-   console.log(error);
    if (axios.isAxiosError(error)) {
       if (!error.response) throw new Error("Axios Error");
       const { code, message }: { code: number; message: string } = error.response.data.error;

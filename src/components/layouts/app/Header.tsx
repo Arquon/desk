@@ -1,5 +1,5 @@
 import { Container } from "@/components/ui/Container";
-import { EBasicDefaultRoutePaths, EModalDefaultRoutePaths, EBasicProjectsRoutePaths } from "@/router/router";
+import { EDefaultBasicRoutePaths, EDefaultModalRoutePaths, EProjectsBasicRoutePaths } from "@/router/router";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import userActions from "@/store/user/actions";
 import React, { type FC } from "react";
@@ -24,28 +24,28 @@ export const Header: FC<Props> = ({}) => {
       <header>
          <Container>
             <div className="row py-5">
-               <div className="col-3">
-                  <Link className="fs-5" to={EBasicDefaultRoutePaths.landing}>
+               <div className="col-4">
+                  <Link className="fs-5" to={EDefaultBasicRoutePaths.landing}>
                      Главная
                   </Link>
                </div>
-               <div className="col-3 text-center">
-                  <Link className="fs-5" to={EBasicProjectsRoutePaths.allProjects}>
+               <div className="col-4 text-center">
+                  <Link className="fs-5" to={EProjectsBasicRoutePaths.allProjects}>
                      Мои проекты
                   </Link>
                </div>
-               <div className="col-3 text-center">
+               {/* <div className="col-3 text-center">
                   <Link className="fs-5" to={EBasicDefaultRoutePaths.admin}>
                      Админ панель
                   </Link>
-               </div>
-               <div className="col-3 text-end">
+               </div> */}
+               <div className="col-4 text-end">
                   {isAuth ? (
                      <a className="fs-5" onClick={signOut}>
                         {user.email}
                      </a>
                   ) : (
-                     <Link className="fs-5" to={EModalDefaultRoutePaths.login} state={{ background: location }}>
+                     <Link className="fs-5" to={EDefaultModalRoutePaths.login} state={{ background: location }}>
                         Войти
                      </Link>
                   )}

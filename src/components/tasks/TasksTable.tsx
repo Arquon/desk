@@ -18,18 +18,30 @@ export const TasksTable: FC<TasksTableProps> = () => {
 
    const taskStatusesToShow = [...statuses].sort((a, b) => a.order - b.order);
 
-   const filteredTasks: TFilteredTasks = {};
+   const allTasks: TFilteredTasks[] = [];
 
-   for (const status of statuses) {
-      filteredTasks[status.order] = [];
-   }
+   statuses.forEach((status, index) => {
+      allTasks[index] = {
+         id: status.id,
+         order: status.order,
+         tasks: [],
+      };
+   });
+
+   allTasks.sort((a, b) => a.order - b.order);
 
    for (const task of tasks) {
-      filteredTasks[task.status].push(task);
+      if (task.inHistory) continue;
+      const tasksObject = allTasks.find((filteredTasksObject) => task.statusId === filteredTasksObject.id);
+      if (tasksObject) {
+         tasksObject.tasks.push(task);
+      } else {
+         allTasks[0]?.tasks.push(task);
+      }
    }
 
-   for (const tasks of Object.values(filteredTasks)) {
-      tasks.sort((a, b) => {
+   for (const tasksObject of allTasks) {
+      tasksObject.tasks.sort((a, b) => {
          if (!a.statusUpdatedAt) {
             return -1;
          } else if (!b.statusUpdatedAt) {
@@ -47,11 +59,11 @@ export const TasksTable: FC<TasksTableProps> = () => {
       setCurrentTask(task);
    };
 
-   const onDropHandler = async (newStatus: string): Promise<void> => {
+   const onDropHandler = async (newStatusId: string): Promise<void> => {
       if (!currentTask) return;
       setIsLoadingUpdateTaskStatus(true);
       try {
-         unwrapResult(await dispatch(tasksActions.updateTask({ currentTask, updatedTaskFields: { status: +newStatus } })));
+         unwrapResult(await dispatch(tasksActions.updateTask({ currentTask, updatedTaskFields: { statusId: newStatusId } })));
          setCurrentTask(null);
       } catch (error) {
          toastError(error);
@@ -62,25 +74,28 @@ export const TasksTable: FC<TasksTableProps> = () => {
 
    return (
       <>
-         <div className="tasks__table mb-3">
-            <div style={{ overflow: "auto" }}>
+         <div className="project__wrap">
+            <div className="project__table">
                <div style={{ minWidth: 1000 }}>
-                  <div className="tasks__row">
+                  <div className="project__row">
                      {taskStatusesToShow.map((taskStatus) => (
-                        <div className="tasks__heading" key={taskStatus.id}>
-                           <p className="text-center">{taskStatus.title}</p>
+                        <div className="project__heading" key={taskStatus.id}>
+                           <p className="text-center">
+                              {taskStatus.title} - {taskStatus.order + 1}
+                           </p>
                         </div>
                      ))}
                   </div>
-                  <div className="tasks__row">
-                     {Object.entries(filteredTasks).map(([key, tasks]) => (
+                  <div className="project__row">
+                     {allTasks.map((tasksObject, index) => (
                         <ColumnTask
-                           key={key}
-                           tasks={tasks}
+                           key={tasksObject.id}
+                           tasks={tasksObject.tasks}
                            onDragStart={onDragStartHandler}
-                           onDrop={async () => await onDropHandler(key)}
-                           currentTaskStatus={currentTask?.status}
-                           columnStatus={+key}
+                           onDrop={async () => await onDropHandler(tasksObject.id)}
+                           currentTaskStatusId={currentTask?.statusId}
+                           columnStatusId={tasksObject.id}
+                           draggable
                         />
                      ))}
                   </div>

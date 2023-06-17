@@ -1,7 +1,7 @@
 import { type ITaskStatus } from "@/types/ITaskStatus";
 import { isStatuesAsyncThunkError } from "@/utils/asyncThunkErrorChecking";
 import { createSlice } from "@reduxjs/toolkit";
-import { createStatus, deleteStatus, fetchTaskStatuses, updateStatus } from "./actions";
+import { createStatus, deleteStatus, fetchTaskStatuses, updateProjectStatuses, updateStatus } from "./actions";
 import { type Nullable, type TimeStamp } from "@/types/default";
 
 interface IStatusesState {
@@ -38,17 +38,13 @@ const statusesSlice = createSlice({
             state.isErrorStatuses = true;
          })
          // createStatus
-         .addCase(createStatus.pending, (state) => {
-            state.isLoadingStatuses = true;
-         })
+         .addCase(createStatus.pending, (state) => {})
          .addCase(createStatus.fulfilled, (state, action) => {
             state.isLoadingStatuses = false;
             state.statuses.push(action.payload);
          })
          // updateStatus
-         .addCase(updateStatus.pending, (state) => {
-            state.isLoadingStatuses = true;
-         })
+         .addCase(updateStatus.pending, (state) => {})
          .addCase(updateStatus.fulfilled, (state, action) => {
             state.isLoadingStatuses = false;
             state.statuses = state.statuses.map((status) => {
@@ -57,6 +53,10 @@ const statusesSlice = createSlice({
                }
                return status;
             });
+         })
+         // updateProjectStatuses
+         .addCase(updateProjectStatuses.fulfilled, (state, action) => {
+            state.statuses = action.payload;
          })
          // deleteStatus
          .addCase(deleteStatus.pending, (state) => {

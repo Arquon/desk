@@ -2,7 +2,7 @@ import { CustomButtonLink } from "@/components/ui/CustomButtonLink";
 import { Heading } from "@/components/ui/Heading";
 import { Spinner } from "@/components/ui/Spinner";
 import { AuthRequire } from "@/hoc/AuthRequire";
-import { EBasicProjectsRoutePaths } from "@/router/router";
+import { EProjectsBasicRoutePaths } from "@/router/router";
 import projectsActions from "@/store/projects/actions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { isOutDated, toastError } from "@/utils/functions";
@@ -54,7 +54,7 @@ export const ProjectsPageComponent: FC<ProjectsPageProps> = ({}) => {
                         ))}
                      </div>
                      <div>
-                        <CustomButtonLink className="fs-4" to={EBasicProjectsRoutePaths.newProject}>
+                        <CustomButtonLink className="fs-4" to={EProjectsBasicRoutePaths.projectCreate}>
                            Создать проект
                         </CustomButtonLink>
                      </div>

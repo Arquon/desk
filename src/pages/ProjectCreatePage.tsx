@@ -4,7 +4,7 @@ import { Heading } from "@/components/ui/Heading";
 import { LightSpinner } from "@/components/ui/Spinner";
 import { ModalProvider } from "@/providers/ModalProvider";
 import { AuthRequire } from "@/hoc/AuthRequire";
-import { EBasicProjectsRoutePaths } from "@/router/router";
+import { EProjectsBasicRoutePaths } from "@/router/router";
 import projectsActions from "@/store/projects/actions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { type IProjectFormState } from "@/types/IProject";
@@ -27,7 +27,7 @@ export const ProjectCreatePageComponent: FC<ProjectCreatePageProps> = () => {
       setIsLoadingCreateProject(true);
       try {
          unwrapResult(await dispatch(projectsActions.createProject(data)));
-         const path = generatePath(EBasicProjectsRoutePaths.allProjects);
+         const path = generatePath(EProjectsBasicRoutePaths.allProjects);
          toastSuccess("Проект создан");
          navigate(path);
       } finally {
@@ -36,7 +36,7 @@ export const ProjectCreatePageComponent: FC<ProjectCreatePageProps> = () => {
    };
 
    const onBackgroundClickHandler = (): void => {
-      const path = generatePath(EBasicProjectsRoutePaths.allProjects);
+      const path = generatePath(EProjectsBasicRoutePaths.allProjects);
       navigate(path);
    };
 
@@ -49,7 +49,7 @@ export const ProjectCreatePageComponent: FC<ProjectCreatePageProps> = () => {
    }
 
    if (isErrorProjects) {
-      const path = generatePath(EBasicProjectsRoutePaths.allProjects);
+      const path = generatePath(EProjectsBasicRoutePaths.allProjects);
       return <Navigate to={path} />;
    }
 

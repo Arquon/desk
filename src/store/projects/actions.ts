@@ -12,9 +12,6 @@ const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: str
    "projects/fetchProjects",
    async function (_, { rejectWithValue, getState }) {
       try {
-         // await delay(1000);
-         // const testError = "fetch projects test error";
-         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          const data = await projectsService.fetchProjects(userId);
          return data;
@@ -33,7 +30,6 @@ const fetchSingleProject = createAsyncThunk<IProject, string, { rejectValue: str
          const data = await projectsService.fetchSingleProject(userId, projectId);
          return data;
       } catch (error) {
-         console.log({ error });
          const parsedError = projectNetworkErrorsHandler(error);
          return rejectWithValue(parsedError);
       }
@@ -44,9 +40,6 @@ const createProject = createAsyncThunk<IProject, IProjectFormState, { rejectValu
    "projects/createProject",
    async function (projectState, { rejectWithValue, getState }) {
       try {
-         // await delay(1000);
-         // const testError = "testError";
-         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          const data = await projectsService.createProject({ ...projectState, userId });
          await statusesService.createDefaultProjectStatuses(data.userId, data.id);
@@ -62,9 +55,6 @@ const updateProject = createAsyncThunk<IProject, IProject, { rejectValue: string
    "projects/updateProject",
    async function (project, { rejectWithValue }) {
       try {
-         // await delay(1000);
-         // const testError = "testError";
-         // if (typeof testError === "string") throw testError;
          const data = await projectsService.updateProject(project);
          return data;
       } catch (error) {
@@ -78,9 +68,6 @@ const deleteProject = createAsyncThunk<string, string, { rejectValue: string; st
    "projects/deleteProject",
    async function (projectId, { rejectWithValue, getState }) {
       try {
-         // await delay(1000);
-         // const testError = "testError";
-         // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
          await projectsService.deleteProject(userId, projectId);
          await Promise.all([statusesService.deleteProjectStatuses(userId, projectId), tasksService.deleteProjectTasks(userId, projectId)]);

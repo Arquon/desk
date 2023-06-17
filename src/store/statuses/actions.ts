@@ -51,6 +51,22 @@ const updateStatus = createAsyncThunk<ITaskStatus, ITaskStatus, { rejectValue: s
       }
    }
 );
+
+const updateProjectStatuses = createAsyncThunk<
+   ITaskStatus[],
+   { statuses: ITaskStatus[]; projectId: string },
+   { rejectValue: string; state: RootState }
+>("statuses/updateProjectStatuses", async function ({ statuses, projectId }, { rejectWithValue, getState }) {
+   try {
+      const userId = getUserId(getState);
+      const data = await statusesService.updateProjectStatuses(userId, projectId, statuses);
+      return data;
+   } catch (error) {
+      const parsedError = tasksNetworkErrorsHandler(error);
+      return rejectWithValue(parsedError);
+   }
+});
+
 const deleteStatus = createAsyncThunk<string, { statusId: string; projectId: string }, { rejectValue: string; state: RootState }>(
    "statuses/deleteStatus",
    async function ({ statusId, projectId }, { rejectWithValue, getState }) {
@@ -69,8 +85,9 @@ const statusesActions = {
    fetchTaskStatuses,
    createStatus,
    updateStatus,
+   updateProjectStatuses,
    deleteStatus,
 };
 
-export { fetchTaskStatuses, createStatus, updateStatus, deleteStatus };
+export { fetchTaskStatuses, createStatus, updateStatus, updateProjectStatuses, deleteStatus };
 export default statusesActions;
