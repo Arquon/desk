@@ -19,13 +19,13 @@ import { LightSpinner } from "@/components/ui/Spinner";
 export const MAX_STATUSES_COUNT = 7;
 export const MIN_STATUSES_COUNT = 2;
 
-interface StatusesPageProps {}
+interface StatusesPageProps {
+   projectId: string;
+}
 
-export const StatusesPage: FC<StatusesPageProps> = ({}) => {
+const StatusesPageComponent: FC<StatusesPageProps> = ({ projectId }) => {
    const { statuses } = useAppSelector((state) => state.statuses);
    const dispatch = useAppDispatch();
-
-   const { projectId } = useParams<IRouteParams["taskCreate"]>();
 
    const { isError, isLoading } = useProject();
    const [currentStatus, setCurrentStatus] = useState<Nullable<ITaskStatus>>(null);
@@ -35,8 +35,6 @@ export const StatusesPage: FC<StatusesPageProps> = ({}) => {
    useEffect(() => {
       setStatusesToEdit(statuses);
    }, [statuses]);
-
-   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
 
    const sortedStatuses = [...statusesToEdit].sort((a, b) => a.order - b.order);
 
@@ -189,4 +187,11 @@ export const StatusesPage: FC<StatusesPageProps> = ({}) => {
          )}
       </>
    );
+};
+
+export const StatusesPage: FC = ({}) => {
+   const { projectId } = useParams<IRouteParams["projectView"]>();
+   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
+
+   return <StatusesPageComponent projectId={projectId} />;
 };

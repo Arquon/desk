@@ -6,9 +6,9 @@ import { isAxiosError } from "axios";
 const tasksEndPoint = "tasks/";
 
 export const tasksService = {
-   fetchTasks: async (userId: string, projectId: string): Promise<ITask[]> => {
+   fetchTasks: async (userId: string, projectId: string, signal?: AbortSignal): Promise<ITask[]> => {
       try {
-         const { data } = await httpService.get<ITask[]>(`${tasksEndPoint}${userId}/${projectId}/`);
+         const { data } = await httpService.get<ITask[]>(`${tasksEndPoint}${userId}/${projectId}/`, { signal });
          return data;
       } catch (error) {
          if (isAxiosError(error) && error.message === "CustomError" && error.code === "NOT_FOUND") return [];

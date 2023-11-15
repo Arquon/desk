@@ -7,7 +7,7 @@ import TerserPlugin from "terser-webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import Dotenv from "dotenv-webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
-import { InjectManifest } from "workbox-webpack-plugin";
+// import { InjectManifest } from "workbox-webpack-plugin";
 import { type RuleSetUseItem, type Configuration } from "webpack";
 
 const isServe = process.env.NODE_ENV === "serve";
@@ -36,11 +36,11 @@ const plugins = [
          { from: "src/assets/icons/favicon.ico", to: "[name][ext]" },
       ],
    }),
-   new InjectManifest({
-      maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
-      swSrc: "./src/sw/serviceWorker.ts",
-      swDest: "service-worker.js",
-   }),
+   // new InjectManifest({
+   //    maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
+   //    swSrc: "./src/sw/serviceWorker.ts",
+   //    swDest: "service-worker.js",
+   // }),
 ];
 
 if (isServe) {

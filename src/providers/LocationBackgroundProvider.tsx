@@ -19,6 +19,9 @@ export const LocationBackgroundProvider: FC<PropsWithChildren> = ({ children }) 
          locationBackground = modalRouteBackground;
       }
    }
+
+   console.log({ locationBackground });
+
    return <LocationBackgroundContext.Provider value={locationBackground}>{children}</LocationBackgroundContext.Provider>;
 };
 

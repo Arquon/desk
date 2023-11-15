@@ -47,8 +47,10 @@ export const authService = {
       const { data } = await httpService.put<IUserData>(usersEndPoint + id + "/", { ...userData, id });
       return data;
    },
-   getUserData: async (userId: string) => {
-      const { data } = await httpService.get<IUserData>(usersEndPoint + userId + "/");
+   getUserData: async (userId: string, signal?: AbortSignal) => {
+      const { data } = await httpService.get<IUserData>(usersEndPoint + userId + "/", {
+         signal,
+      });
       return data;
    },
 };

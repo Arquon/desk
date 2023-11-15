@@ -31,17 +31,11 @@ const getDefaultProjectStatuses = (): TDefaultStatusesObject => ({
       order: 0,
       projectId: "",
    },
-   "default-5": {
-      title: "История",
-      id: "default-5",
-      order: -1,
-      projectId: "",
-   },
 });
 
 export const statusesService = {
-   fetchProjectStatuses: async (userId: string, projectId: string): Promise<ITaskStatus[]> => {
-      const { data } = await httpService.get<ITaskStatus[]>(`${statusesEndPoint}${userId}/${projectId}/`);
+   fetchProjectStatuses: async (userId: string, projectId: string, signal?: AbortSignal): Promise<ITaskStatus[]> => {
+      const { data } = await httpService.get<ITaskStatus[]>(`${statusesEndPoint}${userId}/${projectId}/`, { signal });
       return data;
    },
    createStatus: async (userId: string, status: ITaskStatusWithoutId): Promise<ITaskStatus> => {

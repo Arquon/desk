@@ -1,11 +1,11 @@
 import { useLocationBackground } from "@/providers/LocationBackgroundProvider";
 import React, { type PropsWithChildren, type FC } from "react";
 import { createPortal } from "react-dom";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 interface MainPortalProps {}
 
-export const PortalPage: FC<PropsWithChildren<MainPortalProps>> = ({ children }) => {
+export const PortalComponent: FC<PropsWithChildren<MainPortalProps>> = ({ children }) => {
    const navigate = useNavigate();
    const location = useLocation();
    const locationBackground = useLocationBackground();
@@ -31,3 +31,9 @@ export const PortalPage: FC<PropsWithChildren<MainPortalProps>> = ({ children })
       </>
    );
 };
+
+export const PortalPage: FC<PropsWithChildren<MainPortalProps>> = () => (
+   <PortalComponent>
+      <Outlet />
+   </PortalComponent>
+);

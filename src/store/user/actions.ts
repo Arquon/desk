@@ -44,13 +44,13 @@ const register = createAsyncThunk<IUserData, IAuthData, { rejectValue: string | 
    }
 );
 
-const getCurrentUserData = createAsyncThunk<Nullable<IUserData>, undefined, { rejectValue: string }>(
+const getCurrentUserData = createAsyncThunk<Nullable<IUserData>, AbortSignal | undefined, { rejectValue: string }>(
    "user/getCurrentUserData",
-   async function (_, { rejectWithValue }) {
+   async function (signal, { rejectWithValue }) {
       try {
          const { localId } = localStorageService.getCredentials();
          if (!localId) return null;
-         const data = await authService.getUserData(localId);
+         const data = await authService.getUserData(localId, signal);
          return data;
       } catch (error) {
          const parsedError = userNetworkErrorsHandler(error);

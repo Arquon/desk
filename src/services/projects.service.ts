@@ -6,17 +6,19 @@ import { isAxiosError } from "axios";
 const projectsEndPoint = "projects/";
 
 export const projectsService = {
-   fetchProjects: async (userId: string): Promise<IProject[]> => {
+   fetchProjects: async (userId: string, signal?: AbortSignal): Promise<IProject[]> => {
       try {
-         const { data } = await httpService.get<IProject[]>(`${projectsEndPoint}${userId}/`);
+         const { data } = await httpService.get<IProject[]>(`${projectsEndPoint}${userId}/`, {
+            signal,
+         });
          return data;
       } catch (error) {
          if (isAxiosError(error) && error.message === "CustomError" && error.code === "NOT_FOUND") return [];
          throw error;
       }
    },
-   fetchSingleProject: async (userId: string, projectId: string): Promise<IProject> => {
-      const { data } = await httpService.get<IProject>(`${projectsEndPoint}${userId}/${projectId}/`);
+   fetchSingleProject: async (userId: string, projectId: string, signal?: AbortSignal): Promise<IProject> => {
+      const { data } = await httpService.get<IProject>(`${projectsEndPoint}${userId}/${projectId}/`, { signal });
       return data;
    },
    createProject: async (project: TProjectWithoutId): Promise<IProject> => {

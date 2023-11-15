@@ -7,7 +7,8 @@ import tasksActions from "@/store/tasks/actions";
 import { type ITask } from "@/types/ITask";
 import { type ITaskStatus } from "@/types/ITaskStatus";
 import { isOutDated, toastError } from "@/utils/functions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useFetchAbortEffect } from "./useFetchAbortEffect";
 
 interface UseProjectViewReturnType {
    deleteProject: (projectId: string) => Promise<void>;
@@ -30,30 +31,30 @@ export function useProjectView(projectId: string): UseProjectViewReturnType {
       unwrapResult(await dispatch(projectsActions.updateProject(project)));
    }
 
-   async function fetchProjectInfo(id: string, force: boolean = false): Promise<void> {
-      if (!id) return;
+   async function fetchProjectInfo(projectId: string, force: boolean = false, signal?: AbortSignal): Promise<void> {
+      if (!projectId) return;
       let projectPromise: () => Promise<IProject | undefined>;
       let tasksPromise: () => Promise<ITask[] | undefined>;
       let statusesPromise: () => Promise<ITaskStatus[] | undefined>;
 
       if (force) {
-         projectPromise = async () => unwrapResult(await dispatch(projectsActions.fetchSingleProject(id)));
-         tasksPromise = async () => unwrapResult(await dispatch(tasksActions.fetchTasks(id)));
-         statusesPromise = async () => unwrapResult(await dispatch(statusesActions.fetchTaskStatuses(id)));
+         projectPromise = async () => unwrapResult(await dispatch(projectsActions.fetchSingleProject({ projectId, signal })));
+         tasksPromise = async () => unwrapResult(await dispatch(tasksActions.fetchTasks({ projectId, signal })));
+         statusesPromise = async () => unwrapResult(await dispatch(statusesActions.fetchTaskStatuses({ projectId, signal })));
       } else {
          projectPromise = async () => {
             if (isOutDated(lastFetchSingleProject)) {
-               return unwrapResult(await dispatch(projectsActions.fetchSingleProject(id)));
+               return unwrapResult(await dispatch(projectsActions.fetchSingleProject({ projectId, signal })));
             }
          };
          tasksPromise = async () => {
             if (isOutDated(lastFetchTasks)) {
-               return unwrapResult(await dispatch(tasksActions.fetchTasks(id)));
+               return unwrapResult(await dispatch(tasksActions.fetchTasks({ projectId, signal })));
             }
          };
          statusesPromise = async () => {
             if (isOutDated(lastFetchStatuses)) {
-               return unwrapResult(await dispatch(statusesActions.fetchTaskStatuses(id)));
+               return unwrapResult(await dispatch(statusesActions.fetchTaskStatuses({ projectId, signal })));
             }
          };
       }
@@ -62,41 +63,42 @@ export function useProjectView(projectId: string): UseProjectViewReturnType {
       await Promise.all(promises);
    }
 
-   const firstLoadProjectInfo = async (id: string): Promise<void> => {
+   const loadProjectInfo = async (id: string, signal?: AbortSignal, isFirstLoad: boolean = false): Promise<void> => {
       try {
-         await fetchProjectInfo(id, id !== currentProject?.id);
-         setFirstLoad(true);
+         await fetchProjectInfo(id, id !== currentProject?.id, signal);
+         if (isFirstLoad) setFirstLoad(true);
       } catch (error) {
          toastError(error);
       }
    };
 
-   const loadProjectInfo = async (projectId: string): Promise<void> => {
-      try {
-         await fetchProjectInfo(projectId, projectId !== currentProject?.id);
-      } catch (error) {
-         toastError(error);
-      }
-   };
-
-   useEffect(() => {
-      firstLoadProjectInfo(projectId);
+   useFetchAbortEffect((signal) => {
+      loadProjectInfo(projectId, signal, true);
    }, []);
 
-   useEffect(() => {
-      if (!firstLoad || lastFetchTasks !== null) return;
-      loadProjectInfo(projectId);
-   }, [lastFetchTasks]);
+   useFetchAbortEffect(
+      (signal) => {
+         if (!firstLoad || lastFetchTasks !== null) return;
+         loadProjectInfo(projectId, signal);
+      },
+      [lastFetchTasks]
+   );
 
-   useEffect(() => {
-      if (!firstLoad || lastFetchSingleProject !== null) return;
-      loadProjectInfo(projectId);
-   }, [lastFetchSingleProject]);
+   useFetchAbortEffect(
+      (signal) => {
+         if (!firstLoad || lastFetchSingleProject !== null) return;
+         loadProjectInfo(projectId, signal);
+      },
+      [lastFetchSingleProject]
+   );
 
-   useEffect(() => {
-      if (!firstLoad || lastFetchStatuses !== null) return;
-      loadProjectInfo(projectId);
-   }, [lastFetchStatuses]);
+   useFetchAbortEffect(
+      (signal) => {
+         if (!firstLoad || lastFetchStatuses !== null) return;
+         loadProjectInfo(projectId, signal);
+      },
+      [lastFetchStatuses]
+   );
 
    return { deleteProject, updateProject };
 }

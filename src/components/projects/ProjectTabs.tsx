@@ -1,17 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 import React, { type FC } from "react";
-import { useParams, generatePath } from "react-router-dom";
-import { type IRouteParams, ETasksBasicRoutePaths, EStatusesBasicRoutePaths, EHistoryBasicRoutePaths } from "@/router/router";
+import { generatePath } from "react-router-dom";
+import { ETasksBasicRoutePaths, EStatusesBasicRoutePaths, EHistoryBasicRoutePaths } from "@/router/router";
 import { ProjectTabItem } from "./ProjectTabItem";
 
-interface ProjectTabsProps {}
+interface ProjectTabsProps {
+   projectId: string;
+}
 
-export const ProjectTabs: FC<ProjectTabsProps> = ({}) => {
-   const { projectId } = useParams<IRouteParams["projectView"]>();
-
-   if (!projectId) return null;
-
+export const ProjectTabs: FC<ProjectTabsProps> = ({ projectId }) => {
    // const notesPath = generatePath(EBasicNotesRoutePaths.projectNotes, {
    //    projectId: projectId ?? null,
    // });

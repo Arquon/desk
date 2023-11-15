@@ -1,7 +1,7 @@
 import { type IAuthData } from "@/types/auth/IAuthData";
 import { type DeepPartial } from "@/types/default";
 import { type ValidationErrors } from "@/types/validator/errorTypes";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { isString } from "./typeChecking";
 
 interface NetworkErrors {
@@ -18,6 +18,7 @@ interface NetworkErrors {
 
 function networkErrorsHandler(error: unknown, defaultErrorMessages: NetworkErrors, customErrorMessages?: DeepPartial<NetworkErrors>): string {
    if (axios.isAxiosError(error)) {
+      if (error.code === AxiosError.ERR_CANCELED) return AxiosError.ERR_CANCELED;
       if (!error.response) return "Axios Error";
       const { statusText, status: code } = error.response;
       if (code === 401) {

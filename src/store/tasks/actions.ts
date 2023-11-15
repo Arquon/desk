@@ -6,15 +6,15 @@ import { tasksService } from "@/services/tasks.service";
 import { delay, getUserId } from "@/utils/functions";
 import { type RootState } from "../store";
 
-const fetchTasks = createAsyncThunk<ITask[], string, { rejectValue: string; state: RootState }>(
+const fetchTasks = createAsyncThunk<ITask[], { projectId: string; signal?: AbortSignal }, { rejectValue: string; state: RootState }>(
    "tasks/fetchTasks",
-   async function (projectId, { rejectWithValue, getState }) {
+   async function ({ projectId, signal }, { rejectWithValue, getState }) {
       try {
          // await delay(1000);
          // const testError = "fetch tasks test error";
          // if (typeof testError === "string") throw testError;
          const userId = getUserId(getState);
-         const data = await tasksService.fetchTasks(userId, projectId);
+         const data = await tasksService.fetchTasks(userId, projectId, signal);
          return data;
       } catch (error) {
          const errorString: string = tasksNetworkErrorsHandler(error);

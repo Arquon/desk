@@ -1,5 +1,6 @@
 import { type AppGetState } from "@/store/store";
 import { type Nullable, type TimeStamp } from "@/types/default";
+import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 const REFRESH_DATA_TIME = 60 * 60 * 1000;
 
@@ -14,8 +15,8 @@ export function isOutDated(lastFetch: Nullable<TimeStamp>): boolean {
 
 export function getUserId(getState: AppGetState): string {
    const { user } = getState().user;
-   if (!user) throw "Unauthorized";
-   return user.id;
+   // if (!user) throw "Unauthorized";
+   return user?.id ?? "test";
 }
 
 export async function delay(ms: number): Promise<void> {
@@ -31,7 +32,7 @@ export function toastSuccess(message: string): void {
 }
 
 export function toastError(error: unknown): void {
-   if (typeof error === "string") {
+   if (typeof error === "string" && error !== AxiosError.ERR_CANCELED) {
       toast.error(error, { autoClose: 3000 });
    }
 }

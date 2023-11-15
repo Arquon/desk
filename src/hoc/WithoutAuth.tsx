@@ -8,6 +8,8 @@ interface AuthRequireProps {
 
 export const WithoutAuth: FC<PropsWithChildren<AuthRequireProps>> = ({ children, to = "/" }) => {
    const { user } = useAppSelector((state) => state.user);
+   console.log({ user });
    if (user) return <Navigate to={to} replace />;
+   console.log("render children");
    return <>{children}</>;
 };

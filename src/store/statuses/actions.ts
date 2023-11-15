@@ -7,14 +7,14 @@ import { tasksNetworkErrorsHandler } from "@/utils/networkErrorHandlers";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type RootState } from "../store";
 
-const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], string, { rejectValue: string }>(
+const fetchTaskStatuses = createAsyncThunk<ITaskStatus[], { projectId: string; signal?: AbortSignal }, { rejectValue: string }>(
    "statuses/fetchStatuses",
-   async function (projectId, { rejectWithValue }) {
+   async function ({ projectId, signal }, { rejectWithValue }) {
       try {
          // await delay(5000);
          const { localId } = localStorageService.getCredentials();
          if (!localId) throw "Unauthorized";
-         const data = await statusesService.fetchProjectStatuses(localId, projectId);
+         const data = await statusesService.fetchProjectStatuses(localId, projectId, signal);
          return data;
       } catch (error) {
          const errorString: string = tasksNetworkErrorsHandler(error);

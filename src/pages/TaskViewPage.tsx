@@ -17,7 +17,9 @@ import { Navigate, useNavigate, useOutletContext, useParams } from "react-router
 import { useProject } from "@/providers/ProjectProvider";
 import { type Nullable } from "@/types/default";
 
-interface TaskViewPageProps {}
+interface TaskViewPageProps {
+   taskId: string;
+}
 
 export enum ETaskViewPages {
    history = "history",
@@ -28,12 +30,11 @@ interface ITaskViewOutletContext {
    currentPage: ETaskViewPages;
 }
 
-export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
+export const TaskViewComponent: FC<TaskViewPageProps> = ({ taskId }) => {
    const dispatch = useAppDispatch();
    const { tasks } = useAppSelector((state) => state.tasks);
    const { isLoading, isError } = useProject();
 
-   const { taskId, projectId } = useParams<IRouteParams["taskView"]>();
    const navigate = useNavigate();
    const { currentPage } = useOutletContext<ITaskViewOutletContext>();
 
@@ -45,28 +46,6 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
    const [isLoadingDeleteTask, setIsLoadingDeleteTask] = useState(false);
    const [currentTask, setCurrentTask] = useState<Nullable<ITask>>(null);
 
-   useEffect(() => {
-      if (!isLoading && !isError) {
-         const searchedTask = tasks.find((task) => task.id === taskId);
-         if (!searchedTask) {
-            toastError("Задача не найдена");
-            navigateToParentRoute();
-            return;
-         }
-         setCurrentTask(searchedTask);
-      }
-   }, [isLoading]);
-
-   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
-   if (!taskId) return <Navigate to={"../"} />;
-   if (isError) return <Navigate to={"../"} />;
-   if (isLoading || !currentTask)
-      return (
-         <ModalProvider>
-            <LightSpinner />
-         </ModalProvider>
-      );
-
    const navigateToParentRoute = (): void => {
       navigate("../");
    };
@@ -76,6 +55,7 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
    };
 
    const onUpdateHandler = async (data: ITaskFormState): Promise<void> => {
+      if (!currentTask) return;
       setIsLoadingEditTask(true);
       try {
          unwrapResult(await dispatch(tasksActions.updateTask({ currentTask, updatedTaskFields: data })));
@@ -86,6 +66,7 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
    };
 
    const onDeleteHandler = async (): Promise<void> => {
+      if (!currentTask) return;
       setIsLoadingDeleteTask(true);
       try {
          await dispatch(tasksActions.deleteTask({ projectId: currentTask.projectId, taskId: currentTask.id }));
@@ -97,6 +78,7 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
    };
 
    const onHistoryHandler = async (inHistory: boolean): Promise<void> => {
+      if (!currentTask) return;
       setIsLoadingEditTask(true);
       try {
          unwrapResult(await dispatch(tasksActions.updateTask({ currentTask, updatedTaskFields: { inHistory } })));
@@ -122,6 +104,26 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
       if (isTasksPage) onUpdateHandler(data);
       else onHistoryReturnHandler();
    };
+
+   useEffect(() => {
+      if (!isLoading && !isError) {
+         const searchedTask = tasks.find((task) => task.id === taskId);
+         if (!searchedTask) {
+            toastError("Задача не найдена");
+            navigateToParentRoute();
+            return;
+         }
+         setCurrentTask(searchedTask);
+      }
+   }, [isLoading]);
+
+   if (isError) return <Navigate to={"../"} />;
+   if (isLoading || !currentTask)
+      return (
+         <ModalProvider>
+            <LightSpinner />
+         </ModalProvider>
+      );
 
    return (
       <ModalProvider close={navigateToParentRoute}>
@@ -165,8 +167,15 @@ export const TaskViewComponent: FC<TaskViewPageProps> = ({}) => {
    );
 };
 
-export const TaskViewPage: FC<TaskViewPageProps> = (props) => (
-   <AuthRequire>
-      <TaskViewComponent {...props} />
-   </AuthRequire>
-);
+export const TaskViewPage: FC = () => {
+   const { taskId, projectId } = useParams<IRouteParams["taskView"]>();
+
+   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
+   if (!taskId) return <Navigate to={"../"} />;
+
+   return (
+      <AuthRequire>
+         <TaskViewComponent taskId={taskId} />
+      </AuthRequire>
+   );
+};

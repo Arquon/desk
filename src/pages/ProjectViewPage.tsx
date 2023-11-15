@@ -5,18 +5,16 @@ import { Spinner } from "@/components/ui/Spinner";
 import { AuthRequire } from "@/hoc/AuthRequire";
 import { useProjectView } from "@/hooks/useProjectView";
 import { ProjectProvider, useProject } from "@/providers/ProjectProvider";
-import { EProjectsBasicRoutePaths, type IRouteParams } from "@/router/router";
+import { type IRouteParams, EProjectsBasicRoutePaths } from "@/router/router";
 import React, { type FC } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
 
-interface ProjectViewPageProps {}
+interface ProjectViewPageComponentProps {
+   projectId: string;
+}
 
-export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
+export const ProjectViewPageComponent: FC<ProjectViewPageComponentProps> = ({ projectId }) => {
    const { isError, isLoading } = useProject();
-
-   const { projectId } = useParams<IRouteParams["projectView"]>();
-
-   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
 
    const { deleteProject, updateProject } = useProjectView(projectId);
 
@@ -24,7 +22,7 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
       <>
          <section className="project-view">
             <div className="container-xl">
-               <ProjectTabs />
+               <ProjectTabs projectId={projectId} />
                {isLoading && (
                   <div className="d-flex justify-content-center">
                      <Spinner />
@@ -39,11 +37,14 @@ export const ProjectViewPageComponent: FC<ProjectViewPageProps> = ({}) => {
    );
 };
 
-export const ProjectViewPage: FC<ProjectViewPageProps> = (props) => {
+export const ProjectViewPage: FC = () => {
+   const { projectId } = useParams<IRouteParams["projectView"]>();
+   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
+
    return (
       <AuthRequire>
          <ProjectProvider>
-            <ProjectViewPageComponent {...props} />
+            <ProjectViewPageComponent projectId={projectId} />
          </ProjectProvider>
       </AuthRequire>
    );

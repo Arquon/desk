@@ -14,16 +14,15 @@ import { Navigate, generatePath, useNavigate, useParams } from "react-router-dom
 import { useProject } from "@/providers/ProjectProvider";
 import { toastSuccess } from "@/utils/functions";
 
-interface TaskCreatePageProps {}
+interface TaskCreatePageProps {
+   projectId: string;
+}
 
-export const TaskCreateComponent: FC<TaskCreatePageProps> = () => {
+export const TaskCreateComponent: FC<TaskCreatePageProps> = ({ projectId }) => {
    const dispatch = useAppDispatch();
    const { isLoading, isError } = useProject();
 
    const navigate = useNavigate();
-   const { projectId } = useParams<IRouteParams["taskCreate"]>();
-
-   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
 
    const [isLoadingCreateTask, setIsLoadingCreateTask] = useState(false);
 
@@ -78,10 +77,13 @@ export const TaskCreateComponent: FC<TaskCreatePageProps> = () => {
    );
 };
 
-export const TaskCreatePage: FC<TaskCreatePageProps> = (props) => {
+export const TaskCreatePage: FC = () => {
+   const { projectId } = useParams<IRouteParams["projectView"]>();
+   if (!projectId) return <Navigate to={EProjectsBasicRoutePaths.allProjects} />;
+
    return (
       <AuthRequire>
-         <TaskCreateComponent {...props} />
+         <TaskCreateComponent projectId={projectId} />
       </AuthRequire>
    );
 };

@@ -2,12 +2,13 @@ import { CustomButtonLink } from "@/components/ui/CustomButtonLink";
 import { Heading } from "@/components/ui/Heading";
 import { Spinner } from "@/components/ui/Spinner";
 import { AuthRequire } from "@/hoc/AuthRequire";
+import { useFetchAbortEffect } from "@/hooks/useFetchAbortEffect";
 import { EProjectsBasicRoutePaths } from "@/router/router";
 import projectsActions from "@/store/projects/actions";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { isOutDated, toastError } from "@/utils/functions";
 import { unwrapResult } from "@reduxjs/toolkit";
-import React, { useEffect, type FC } from "react";
+import React, { type FC } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 interface ProjectsPageProps {}
@@ -16,18 +17,18 @@ export const ProjectsPageComponent: FC<ProjectsPageProps> = ({}) => {
    const { projects, lastFetchProjects, isLoadingProjects, isErrorProjects } = useAppSelector((state) => state.projects);
    const dispatch = useAppDispatch();
 
-   const fetchProjects = async (): Promise<void> => {
+   const fetchProjects = async (signal: AbortSignal): Promise<void> => {
       try {
          if (isOutDated(lastFetchProjects)) {
-            unwrapResult(await dispatch(projectsActions.fetchProjects()));
+            unwrapResult(await dispatch(projectsActions.fetchProjects(signal)));
          }
       } catch (error) {
          toastError(error);
       }
    };
 
-   useEffect(() => {
-      fetchProjects();
+   useFetchAbortEffect((signal) => {
+      fetchProjects(signal);
    }, []);
 
    return (

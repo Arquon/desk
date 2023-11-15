@@ -8,12 +8,12 @@ import { statusesService } from "@/services/statuses.service";
 import { tasksService } from "@/services/tasks.service";
 import { type RootState } from "../store";
 
-const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: string; state: RootState }>(
+const fetchProjects = createAsyncThunk<IProject[], AbortSignal | undefined, { rejectValue: string; state: RootState }>(
    "projects/fetchProjects",
-   async function (_, { rejectWithValue, getState }) {
+   async function (signal, { rejectWithValue, getState }) {
       try {
          const userId = getUserId(getState);
-         const data = await projectsService.fetchProjects(userId);
+         const data = await projectsService.fetchProjects(userId, signal);
          return data;
       } catch (error) {
          const parsedError = projectNetworkErrorsHandler(error);
@@ -22,12 +22,12 @@ const fetchProjects = createAsyncThunk<IProject[], undefined, { rejectValue: str
    }
 );
 
-const fetchSingleProject = createAsyncThunk<IProject, string, { rejectValue: string; state: RootState }>(
+const fetchSingleProject = createAsyncThunk<IProject, { projectId: string; signal?: AbortSignal }, { rejectValue: string; state: RootState }>(
    "projects/fetchSingleProject",
-   async function (projectId, { rejectWithValue, getState }) {
+   async function ({ projectId, signal }, { rejectWithValue, getState }) {
       try {
          const userId = getUserId(getState);
-         const data = await projectsService.fetchSingleProject(userId, projectId);
+         const data = await projectsService.fetchSingleProject(userId, projectId, signal);
          return data;
       } catch (error) {
          const parsedError = projectNetworkErrorsHandler(error);
